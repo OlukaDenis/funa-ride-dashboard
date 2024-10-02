@@ -10,7 +10,7 @@
     --foreground: 222 47% 11%;
     --card: 210 40% 96%;
     --card-foreground: 240 0% 0%;
-    --primary: 347 77% 50%;
+    --primary: 181 70% 44%;
     --primary-foreground: 0 0% 100%;
     --muted: 213 27% 84%;
     --muted-foreground: 215 16% 47%;
@@ -24,7 +24,7 @@
     --foreground: 0 0% 95%;
     --card: 0 0% 7%;
     --card-foreground: 0 0% 14.9%;
-    --primary: 347 77% 50%;
+    --primary: 181 70% 44%;
     --primary-foreground: 0 0% 100%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
@@ -58,6 +58,24 @@
   .dark[data-theme='red'] {
     --primary: 350 100% 40%;
     --primary-foreground: 0 85.7% 97.3%;
+  }
+
+  :root[data-theme='funa'] {
+    --primary: 181 70% 44%;
+  }
+
+  .dark[data-theme='funa'] {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 7%;
+    --card-foreground: 210 40% 98%;
+    --primary: 181 70% 44%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --destructive: 350 100% 40%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
   }
 
   :root[data-theme='blue'] {
@@ -149,7 +167,7 @@
     @apply pointer-events-none scale-95 opacity-0 duration-100 ease-in;
   }
 
-  .dropdown:hover > .dropdown-content {
+  .dropdown:hover>.dropdown-content {
     @apply pointer-events-auto block scale-100 animate-fade-in-up opacity-100 duration-200;
   }
 }

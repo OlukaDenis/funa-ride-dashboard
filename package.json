@@ -1,7 +1,7 @@
 {
   "name": "angular-tailwind",
-  "displayName": "Angular Tailwind",
-  "version": "0.8.0",
+  "displayName": "FunaRide",
+  "version": "0.1.0",
   "description": "FunaRide back office dashboard",
   "homepage": "",
   "repository": {
@@ -12,8 +12,6 @@
     "funaride",
     "angular",
     "tailwind",
-    "starter-kit",
-    "tailwind-template",
     "dark mode",
     "open source"
   ],
@@ -49,7 +47,7 @@
     "ng-apexcharts": "^1.7.1",
     "ngx-sonner": "^2.0.1",
     "rxjs": "~7.4.0",
-    "tslib": "^2.3.0",
+    "tslib": "^2.7.0",
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
