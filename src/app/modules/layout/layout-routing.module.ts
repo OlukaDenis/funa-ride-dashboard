@@ -14,6 +14,11 @@ const routes: Routes = [
     loadChildren: () => import('../drivers/drivers.module').then((m) => m.DriversModule),
   },
   {
+    path: 'passengers',
+    component: LayoutComponent,
+    loadChildren: () => import('../passengers/passengers.module').then((m) => m.PassengersModule),
+  },
+  {
     path: 'components',
     component: LayoutComponent,
     loadChildren: () => import('../uikit/uikit.module').then((m) => m.UikitModule),

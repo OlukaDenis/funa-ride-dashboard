@@ -17,6 +17,10 @@
     <p class="mx-4 mb-0 text-center text-sm text-muted-foreground">or</p>
   </div> -->
 
+  <div *ngIf="generalError" class="text-red-500 text-sm mb-4">
+    {{ generalError }}
+  </div>
+
   <div class="space-y-3 text-left">
     <div class="form__group">
       <div class="relative">
@@ -30,6 +34,9 @@
       <div *ngIf="submitted && f['email'].errors" class="is__invalid-error">
         <div *ngIf="f['email'].errors['required']">Required field</div>
         <div *ngIf="f['email'].errors['email']">Email must be an email address valid</div>
+      </div>
+      <div *ngIf="apiErrors['email']" class="is__invalid-error">
+        {{ apiErrors['email'] }}
       </div>
     </div>
 
@@ -53,6 +60,9 @@
       </div>
       <div *ngIf="submitted && f['password'].errors" class="is__invalid-error">
         <div *ngIf="f['password'].errors['required']">Required field</div>
+      </div>
+      <div *ngIf="apiErrors['password']" class="is__invalid-error">
+        {{ apiErrors['password'] }}
       </div>
     </div>
   </div>

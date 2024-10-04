@@ -9,7 +9,7 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/dashboard.svg',
           label: 'Dashboard',
-          route: '/dashboard',
+          route: '/app/dashboard',
           // children: [
           //   { label: 'Home', route: '/dashboard/home' }
           // ],
@@ -17,7 +17,7 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/user.svg',
           label: 'Drivers',
-          route: '/drivers',
+          route: '/app//drivers',
           children: [
             { label: 'List', route: '/drivers/list' },
             { label: 'Incomplete Registrations', route: '/drivers/incomplete' },
@@ -26,22 +26,22 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/users.svg',
           label: 'Passengers',
-          route: '/passengers'
+          route: '/app//passengers',
         },
         {
           icon: 'assets/icons/heroicons/outline/clock.svg',
-          label: 'Rides',
-          route: '/rides'
+          label: 'Trips',
+          route: '/app/trips'
         },
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
           label: 'Reports',
-          route: '/reports'
+          route: '/app/reports'
         },
         {
           icon: 'assets/icons/heroicons/outline/truck.svg',
           label: 'Bus',
-          route: '/bus'
+          route: '/app/bus'
         },
       ]
     },

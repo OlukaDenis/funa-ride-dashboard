@@ -1,52 +1,79 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiError } from 'src/app/core/models/api-error.model';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, NgClass, NgIf, ButtonComponent],
+  imports: [FormsModule,
+    ReactiveFormsModule,
+    RouterLink,
+    AngularSvgIconModule,
+    CommonModule,
+    ButtonComponent,
+    HttpClientModule
+  ],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
-  passwordTextType!: boolean;
+  passwordTextType = false;
+  apiErrors: { [key: string]: string } = {};
+  generalError: string = '';
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router) { }
-
-  onClick() {
-    console.log('Button clicked');
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.form = this._formBuilder.group({
+    this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
-  get f() {
-    return this.form.controls;
-  }
+  get f() { return this.form.controls; }
 
-  togglePasswordTextType() {
-    this.passwordTextType = !this.passwordTextType;
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.submitted = true;
-    const { email, password } = this.form.value;
+    this.apiErrors = {};
+    this.generalError = '';
 
-    // stop here if form is invalid
     if (this.form.invalid) {
       return;
     }
 
-    this._router.navigate(['/']);
+    this.authService.login(this.f['email'].value, this.f['password'].value).subscribe({
+      next: () => {
+        this.router.navigate(['/app/dashboard']);
+      },
+      error: (error) => {
+        console.error('Login failed', error);
+        if (error.error && typeof error.error === 'object') {
+          const apiError = error.error as ApiError;
+          this.generalError = apiError.message;
+          apiError.errors.forEach(err => {
+            const key = Object.keys(err)[0];
+            this.apiErrors[key] = err[key];
+          });
+        } else {
+          this.generalError = 'An unexpected error occurred. Please try again.';
+        }
+      }
+    });
+  }
+
+  togglePasswordTextType(): void {
+    this.passwordTextType = !this.passwordTextType;
   }
 }

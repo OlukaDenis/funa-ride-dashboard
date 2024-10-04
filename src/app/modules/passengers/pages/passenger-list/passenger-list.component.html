@@ -1,0 +1,59 @@
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Passenger List</h1>
+
+    <form [formGroup]="searchForm" class="mb-4">
+        <input type="text" formControlName="search" placeholder="Search passengers" class="w-full p-2 border rounded">
+    </form>
+
+    <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div class="overflow-x-auto">
+            <table
+                class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+                <thead class="border border-muted/20 text-xs text-muted-foreground">
+                    <tr>
+                        <ng-container>
+                            <th class="min-w-[250px]">Name</th>
+                            <th class="min-w-[180px]">Email</th>
+                            <th class="min-w-[180px]">Phone Number</th>
+                            <th class="min-w-[180px]">Creataed On</th>
+                            <th class="min-w-[150px]">Status</th>
+                            <th class="w-[60px]">Action</th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hover:bg-card/50" *ngFor="let user of users">
+                        <td class="">{{ user.firstName }} {{ user.lastName }}</td>
+                        <td class="">{{ user.email }}</td>
+                        <td class="">{{ user.phoneNumber }}</td>
+                        <td class="">{{ formatDate(user.dateCreated) }}</td>
+                        <td class="">
+                            <span class="rounded-[30px]  px-2 py-0.5 text-xs font-medium"
+                                [ngClass]="user.isVerified ? 'text-green-800 bg-green-500/10' : 'bg-yellow-500/10 text-yellow-800'">
+                                {{ user.isVerified ? 'Verified' : 'Not Verified' }}
+                            </span>
+
+                        </td>
+                        <td class="text-center">
+                            <button
+                                class="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-card hover:text-foreground">
+                                <svg-icon src="./assets/icons/heroicons/outline/ellipsis-vertical.svg"
+                                    [svgClass]="'h-4 w-4'">
+                                </svg-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="mt-4 flex justify-between items-center">
+        <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
+            class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Previous</button>
+        <span>Page {{ currentPage + 1 }} of {{ Math.ceil(totalItems / pageSize) }}</span>
+        <button (click)="onPageChange(currentPage + 1)" [disabled]="(currentPage + 1) * pageSize >= totalItems"
+            class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
+    </div>
+</div>
