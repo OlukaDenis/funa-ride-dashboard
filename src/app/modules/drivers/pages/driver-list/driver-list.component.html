@@ -1,1 +1,78 @@
-<p>driver-list works!</p>
+<div class="driver-list-container">
+    <h2>Driver List</h2>
+
+    <div class="filters">
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Search drivers...">
+        <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
+            <option value="all">All Drivers</option>
+            <option value="active">Active Drivers</option>
+            <option value="inactive">Inactive Drivers</option>
+        </select>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">Loading...</div>
+
+    <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div class="overflow-x-auto">
+            <table *ngIf="!isLoading && filteredDrivers.length > 0">
+                <thead class="border border-muted/20 text-xs text-muted-foreground">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hover:bg-card/50" *ngFor="let driver of filteredDrivers">
+                        <td>
+                            <div class="flex items-center">
+                                <img [src]="driver.profilePicture" alt="Profile" class="profile-pic">
+                                <p>{{ driver.firstName }} {{ driver.lastName }}</p>
+                            </div>
+                        </td>
+                        <td>{{ driver.email }}</td>
+                        <td>{{ driver.phoneNumber }}</td>
+                        <td class="">
+                            <span class="rounded-[30px] px-2 py-1 text-xs font-medium"
+                                [ngClass]="driver.accountState === 'active' ? 'text-green-800 bg-green-500/10' : 'bg-red-500/10 text-red-600'">
+                                {{ driver.accountState }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="relative">
+                                <button (click)="toggleDropdown(driver.driverId)"
+                                    class="text-gray-500 hover:text-gray-700">
+                                    <svg-icon src="./assets/icons/heroicons/outline/ellipsis-vertical.svg"
+                                        [svgClass]="'h-4 w-4'">
+                                    </svg-icon>
+                                </button>
+                                <div *ngIf="activeDropdown === driver.driverId"
+                                    class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                    <div class="py-1" role="menu" aria-orientation="vertical"
+                                        aria-labelledby="options-menu">
+                                        <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            (click)="viewDriver(driver.driverId)">View Driver</div>
+                                        <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            (click)="deactivateDriver(driver.driverId)">Deactivate</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading && filteredDrivers.length === 0" class="no-data">
+        No drivers found.
+    </div>
+
+    <div class="pagination">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+</div>

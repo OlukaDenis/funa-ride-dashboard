@@ -1,4 +1,11 @@
-<div class="flex flex-col rounded-lg bg-background p-8">
-    <h3 class="text-muted-foreground/80">{{item.title}}</h3>
-    <p class="font-bold text-xl text-foreground">{{item.content}}</p>
+<div class="flex flex-col rounded-lg bg-background p-8" [class.shimmer]="isLoading">
+    <h3 class="text-muted-foreground/80">{{title}}</h3>
+    <p class="font-bold text-xl text-foreground">
+        <ng-container *ngIf="!isLoading; else loadingContent">
+            {{content}}
+        </ng-container>
+        <ng-template #loadingContent>
+            &nbsp;
+        </ng-template>
+    </p>
 </div>

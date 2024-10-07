@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DashCard } from '../../models/dash-card.model';
 import { CommonModule } from '@angular/common';
 import { DashCardComponent } from "../../components/dash-card/dash-card.component";
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +12,44 @@ import { DashCardComponent } from "../../components/dash-card/dash-card.componen
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  items: DashCard[] = []
+  items: DashCard[] = [];
+  isLoading = true;
 
-  constructor() { }
+  constructor(private dashboardService: DashboardService) { }
 
   ngOnInit(): void {
-    this.buildDashInsights();
+    this.fetchDashInsights();
   }
 
-
-  buildDashInsights() {
-    this.items = [
-      {
-        title: 'New Drivers',
-        content: '20'
+  fetchDashInsights() {
+    this.isLoading = true;
+    this.dashboardService.getDashboardTotals().subscribe(
+      (data) => {
+        this.items = [
+          {
+            title: 'Unapproved Drivers',
+            content: data.un_approved_drivers.toString()
+          },
+          {
+            title: 'Approved Drivers',
+            content: data.approved_drivers.toString()
+          },
+          {
+            title: 'Total Passengers',
+            content: data.total_passengers.toString()
+          },
+          {
+            title: 'Total Trips',
+            content: data.total_routines.toString()
+          }
+        ];
+        this.isLoading = false;
       },
-      {
-        title: 'New Passengers',
-        content: '100'
-      },
-      {
-        title: 'New Trips',
-        content: '430'
+      (error) => {
+        console.error('Error fetching dashboard data:', error);
+        this.isLoading = false;
+        // Handle error (e.g., show error message to user)
       }
-    ]
+    );
   }
-
 }

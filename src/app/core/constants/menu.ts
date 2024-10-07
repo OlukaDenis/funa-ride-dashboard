@@ -19,8 +19,8 @@ export class Menu {
           label: 'Drivers',
           route: '/app//drivers',
           children: [
-            { label: 'List', route: '/drivers/list' },
-            { label: 'Incomplete Registrations', route: '/drivers/incomplete' },
+            { label: 'List', route: '/app/drivers/list' },
+            { label: 'Incomplete Registrations', route: '/app/drivers/incomplete' },
           ],
         },
         {

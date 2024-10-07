@@ -7,6 +7,7 @@ export interface User {
     dateCreated: string;
     isActive: boolean | null;
     isVerified: boolean | null;
+    accountState: boolean | null;
 }
 
 export interface UserResponse {

@@ -38,7 +38,7 @@ export class PassengerListComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(() => {
-      this.currentPage = 0;
+      this.currentPage = 1;
       this.loadUsers();
     });
   }
@@ -58,8 +58,13 @@ export class PassengerListComponent implements OnInit {
     return this.datePipe.transform(date, 'medium') || '';
   }
 
-  onPageChange(page: number): void {
-    this.currentPage = page;
+  onPreviousPage(): void {
+    this.currentPage--;
+    this.loadUsers();
+  }
+
+  onNextPage(): void {
+    this.currentPage++;
     this.loadUsers();
   }
 }

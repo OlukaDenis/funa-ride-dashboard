@@ -12,11 +12,12 @@
                 <thead class="border border-muted/20 text-xs text-muted-foreground">
                     <tr>
                         <ng-container>
-                            <th class="min-w-[250px]">Name</th>
+                            <th class="min-w-[180px]">Name</th>
                             <th class="min-w-[180px]">Email</th>
-                            <th class="min-w-[180px]">Phone Number</th>
-                            <th class="min-w-[180px]">Creataed On</th>
-                            <th class="min-w-[150px]">Status</th>
+                            <th class="min-w-[150px]">Phone Number</th>
+                            <th class="min-w-[180px]">Created On</th>
+                            <th class="min-w-[100px]">Account State</th>
+                            <th class="min-w-[100px]">Status</th>
                             <th class="w-[60px]">Action</th>
                         </ng-container>
                     </tr>
@@ -28,11 +29,16 @@
                         <td class="">{{ user.phoneNumber }}</td>
                         <td class="">{{ formatDate(user.dateCreated) }}</td>
                         <td class="">
-                            <span class="rounded-[30px]  px-2 py-0.5 text-xs font-medium"
+                            <span class="rounded-[30px]  px-2 py-1 text-xs font-medium"
+                                [ngClass]="user.accountState ? 'text-green-800 bg-green-500/10' : 'bg-red-500/10 text-red-600'">
+                                {{ user.accountState ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td class="">
+                            <span class="rounded-[30px]  px-2 py-1 text-xs font-medium"
                                 [ngClass]="user.isVerified ? 'text-green-800 bg-green-500/10' : 'bg-yellow-500/10 text-yellow-800'">
                                 {{ user.isVerified ? 'Verified' : 'Not Verified' }}
                             </span>
-
                         </td>
                         <td class="text-center">
                             <button
@@ -50,10 +56,10 @@
 
 
     <div class="mt-4 flex justify-between items-center">
-        <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
+        <button (click)="onPreviousPage()" [disabled]="currentPage === 1"
             class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Previous</button>
-        <span>Page {{ currentPage + 1 }} of {{ Math.ceil(totalItems / pageSize) }}</span>
-        <button (click)="onPageChange(currentPage + 1)" [disabled]="(currentPage + 1) * pageSize >= totalItems"
+        <span>Page {{ currentPage }} of {{ Math.ceil(totalItems / pageSize) }}</span>
+        <button (click)="onNextPage()" [disabled]="(currentPage + 1) * pageSize >= totalItems"
             class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
     </div>
 </div>
