@@ -17,16 +17,17 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/user.svg',
           label: 'Drivers',
-          route: '/app//drivers',
+          route: '/app/drivers',
           children: [
             { label: 'List', route: '/app/drivers/list' },
             { label: 'Incomplete Registrations', route: '/app/drivers/incomplete' },
+            { label: 'Drivers with Debts', route: '/app/drivers/with-debts' },
           ],
         },
         {
           icon: 'assets/icons/heroicons/outline/users.svg',
           label: 'Passengers',
-          route: '/app//passengers',
+          route: '/app/passengers',
         },
         {
           icon: 'assets/icons/heroicons/outline/clock.svg',

@@ -1,16 +1,12 @@
-<div class="driver-list-container">
-    <h2 class="font-bold text-xl text-foreground mb-2">Driver List</h2>
+<div class="driver-debts-container">
+    <h2 class="font-bold text-xl text-foreground mb-2">Drivers with Debts</h2>
 
     <div class="filters">
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Search drivers...">
-        <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
-            <option value="all">All Drivers</option>
-            <option value="active">Active Drivers</option>
-            <option value="inactive">Inactive Drivers</option>
-        </select>
+
+
     </div>
 
-    <div *ngIf="isLoading" class="loading">Loading...</div>
+    <div *ngIf="isLoading" class="loading text-center">Loading...</div>
 
     <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
         <div class="overflow-x-auto">
@@ -70,9 +66,9 @@
         No drivers found.
     </div>
 
-    <div class="pagination text-center py-4">
-        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <div class="pagination text-center py-4" *ngIf=" filteredDrivers.length > 0">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="mx-4">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="mx-4">Next</button>
     </div>
 </div>

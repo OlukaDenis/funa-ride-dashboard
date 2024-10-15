@@ -12,7 +12,7 @@ export class DriverService {
 
     constructor(private http: HttpClient) { }
 
-    getDrivers(page: number, perPage: number, order: string = 'DESC', active?: boolean): Observable<any> {
+    getDrivers(page: number, perPage: number, order: string = 'DESC', active?: boolean, failed?: boolean): Observable<any> {
         let params = new HttpParams()
             .set('page', page.toString())
             .set('perPage', perPage.toString())
@@ -22,7 +22,34 @@ export class DriverService {
             params = params.set('active', active.toString());
         }
 
+        if (failed) {
+            params = params.set('failed', failed.toString());
+        }
+
         return this.http.get<any>(`${this.apiUrl}/admin/drivers`, { params });
+    }
+
+    getIncompleteDrivers(page?: number, perPage?: number, order: string = 'DESC', active?: boolean, failed: boolean = false): Observable<any> {
+        let params = new HttpParams()
+            .set('page', page?.toString() || '1')
+            .set('perPage', perPage?.toString() || '10')
+            .set('order', order);
+
+        if (active !== undefined) {
+            params = params.set('active', active.toString());
+        }
+        params = params.set('failed', 'true');
+
+        return this.http.get<any>(`${this.apiUrl}/admin/drivers`, { params });
+    }
+
+    getDriversWithDebts(page: number, perPage: number, order: string = 'DESC', active?: boolean): Observable<any> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('perPage', perPage.toString())
+            .set('order', order);
+
+        return this.http.get<any>(`${this.apiUrl}/drivers/debts`);
     }
 
     getDriverById(driverId: number): Observable<Driver> {

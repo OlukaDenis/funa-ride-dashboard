@@ -5,13 +5,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { EmptyListComponentComponent } from '@app/shared/components/empty-list-component/empty-list-component.component';
 
 @Component({
   selector: 'app-passenger-list',
   templateUrl: './passenger-list.component.html',
   styleUrls: ['./passenger-list.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, AngularSvgIconModule]
+  imports: [ReactiveFormsModule, CommonModule, AngularSvgIconModule, EmptyListComponentComponent]
 })
 export class PassengerListComponent implements OnInit {
   users: User[] = [];

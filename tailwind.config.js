@@ -1,5 +1,6 @@
 // const colors = require('tailwindcss/colors');
 
+
 module.exports = {
   prefix: '',
   mode: 'jit',
@@ -70,7 +71,7 @@ module.exports = {
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          foreground: 'hsl(var(--foreground))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
@@ -110,5 +111,6 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('tailwind-scrollbar'),
     'prettier-plugin-tailwindcss',
+    require('daisyui'),
   ],
 };

@@ -1,46 +1,72 @@
 <div class="driver-detail-container">
-    <h2>Driver Details</h2>
+    <h2 class="text-2xl font-bold text-foreground">Driver Details</h2>
 
     <div *ngIf="isLoading" class="loading">Loading...</div>
 
     <div *ngIf="!isLoading && driver">
-        <div class="profile-section">
-            <img [src]="driver.profilePicture" alt="Profile Picture" class="profile-pic">
-            <h3>{{ driver.firstName }} {{ driver.lastName }}</h3>
-            <p>{{ driver.email }}</p>
-            <p>{{ driver.phoneNumber }}</p>
-            <p>Account State: {{ driver.accountState }}</p>
-        </div>
+        <div class="card bg-background shadow-xl">
+            <div class="profile-section card-body">
+                <div class="flex flex-row">
+                    <div class="w-2/5">
+                        <figure class="px-5 mt-5 w-100 h-60 rounded-xl">
+                            <img [src]="driver.profilePicture" alt="Profile Picture" class="profile-pic"
+                                class="w-100 h-100" />
+                        </figure>
 
-        <div class="car-section">
-            <h4>Car Details</h4>
-            <p>Vehicle Name: {{ driver.car.vehicleName }}</p>
-            <p>Registration Number: {{ driver.car.regNo }}</p>
-        </div>
+                        <div class="">
+                            <h3 class="text-2xl font-bold">{{ driver.firstName }} {{ driver.lastName }}</h3>
+                            <p>{{ driver.email }}</p>
+                            <p>{{ driver.phoneNumber }}</p>
+                            <p><span class="rounded-[30px] px-5 py-1 text-xs font-medium bg-green-500 text-white">{{
+                                    driver.accountState
+                                    }}</span> </p>
+                        </div>
+                    </div>
 
-        <div class="metrics-section">
-            <h4>Metrics</h4>
-            <p>Ratings: {{ driver.metrics.ratings }}</p>
-            <p>Total Trips: {{ driver.metrics.totalTrips }}</p>
-            <p>Cancelled Trips: {{ driver.metrics.cancelled }}</p>
-            <p>Debit: {{ driver.metrics.debit }}</p>
-        </div>
+                    <div class="w-3/5">
+                        <div>
+                            <div role="tablist" class="tabs tabs-bordered bg-background">
+                                <a role="tab" class="tab" [ngClass]="currentTab === 1 ? 'tab-active' : ''"
+                                    (click)="toggleTab(1)">Other Info</a>
+                                <a role="tab" class="tab" [ngClass]="currentTab === 2 ? 'tab-active' : ''"
+                                    (click)="toggleTab(2)">Documents</a>
+                                <!-- <a role="tab" class="tab" [ngClass]="currentTab === 3 ? 'tab-active' : ''"
+                                    (click)="toggleTab(3)">Tab 3</a> -->
+                            </div>
 
-        <div class="documents-section">
-            <h4>Documents</h4>
-            <p>National ID Number: {{ driver.documents.nationalIdNumber }}</p>
-            <p>Permit Number: {{ driver.documents.permitNumber }}</p>
-            <p>Permit Expiry Date: {{ driver.documents.permitExpiryDate | date }}</p>
-            <img [src]="driver.documents.drivingLicenseImg" alt="Driving License" class="document-img">
-            <img [src]="driver.documents.nationalIdImg" alt="National ID" class="document-img">
-        </div>
+                            <div class="other-info-section" *ngIf="currentTab === 1">
+                                <p>Vehicle Name: {{ driver.car.vehicleName }}</p>
+                                <p>Registration Number: {{ driver.car.regNo }}</p>
 
-        <div class="additional-info">
-            <h4>Additional Information</h4>
-            <p>Date Created: {{ driver.dateCreated | date }}</p>
-            <p>Auth Method: {{ driver.authMethod }}</p>
-            <p>Phone Number Verified: {{ driver.phoneNumberVerified ? 'Yes' : 'No' }}</p>
-            <p>Password Updated: {{ driver.passwordUpdated ? 'Yes' : 'No' }}</p>
+                                <h4>Metrics</h4>
+                                <p>Ratings: {{ driver.metrics.ratings }}</p>
+                                <p>Total Trips: {{ driver.metrics.totalTrips }}</p>
+                                <p>Cancelled Trips: {{ driver.metrics.cancelled }}</p>
+                                <p>Debit: {{ driver.metrics.debit }}</p>
+                            </div>
+
+                            <div class="documents-section px-5 py-14" *ngIf="currentTab === 2">
+                                <h4>Documents</h4>
+                                <p>National ID Number: {{ driver.documents.nationalIdNumber }}</p>
+                                <p>Permit Number: {{ driver.documents.permitNumber }}</p>
+                                <p>Permit Expiry Date: {{ driver.documents.permitExpiryDate | date }}</p>
+
+                                <div class="">
+                                    <!-- <div class="w-full h-60">
+                                        <img [src]="driver.documents.nationalIdImg" alt="National ID"
+                                            class="document-img w-full h-full">
+                                    </div> -->
+                                    <img [src]="driver.documents.nationalIdImg" alt="National ID" class="document-img ">
+                                    <img [src]="driver.documents.drivingLicenseImg" alt="Driving License"
+                                        class="document-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
     </div>
 

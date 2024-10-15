@@ -14,6 +14,7 @@ import { Driver } from '../../models/driver.model';
 export class DriverDetailComponent implements OnInit {
   driver: Driver | null = null;
   isLoading = false;
+  currentTab = 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -39,5 +40,9 @@ export class DriverDetailComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  toggleTab(tab: number): void {
+    this.currentTab = tab;
   }
 }
