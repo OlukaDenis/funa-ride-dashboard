@@ -1,0 +1,113 @@
+<div class="trip-list-container">
+    <h2 class="font-bold text-xl text-foreground mb-2">Routines</h2>
+
+    <div *ngIf="isLoading" class="loading">Loading...</div>
+
+    <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+
+        <div role="tablist" class="tabs tabs-bordered bg-background">
+            <a role="tab" class="tab" [ngClass]="currentTab === 1 ? 'tab-active' : ''" (click)="toggleTab(1)">Active
+                Routines</a>
+            <a role="tab" class="tab" [ngClass]="currentTab === 2 ? 'tab-active' : ''" (click)="toggleTab(2)">Expired
+                Routines</a>
+        </div>
+
+        <div *ngIf="currentTab === 1" class="mt-4 w-full">
+            <div class="overflow-x-auto">
+                <table *ngIf="!isLoading && activeRoutines.length > 0">
+                    <thead class="border border-muted/20 text-xs text-muted-foreground">
+                        <tr>
+                            <th class="text-left">Origin Address</th>
+                            <th class="text-left">Destination Address</th>
+                            <th class="text-left">Cost Per Head</th>
+                            <th class="text-left">Trip Date</th>
+                            <th class="text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-card/50" *ngFor="let trip of activeRoutines">
+                            <td>
+                                <p>{{ trip.originAddress }}</p>
+                            </td>
+                            <td>{{ trip.destinationAddress }}</td>
+                            <td>{{ helperService.formatNumber(trip.costPerHead) }}</td>
+                            <td>{{ helperService.formatDateTime(trip.createdOn || '') }}</td>
+                            <td>
+                                <div class="relative">
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <svg-icon src="./assets/icons/heroicons/outline/ellipsis-vertical.svg"
+                                            [svgClass]="'h-4 w-4'">
+                                        </svg-icon>
+                                    </button>
+                                    <!-- <div *ngIf="activeDropdown === trip.routeId"
+                                        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                        <div class="py-1" role="menu" aria-orientation="vertical"
+                                            aria-labelledby="options-menu">
+                                            <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                (click)="viewTrip(trip.routeId)">View Trip</div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="py-10">
+                <app-empty-list-component *ngIf="!isLoading && activeRoutines.length === 0"></app-empty-list-component>
+            </div>
+        </div>
+
+        <div *ngIf="currentTab === 2" class="mt-4 w-full">
+            <div class="overflow-x-auto">
+                <table *ngIf="!isLoading && expiredRoutines.length > 0">
+                    <thead class="border border-muted/20 text-xs text-muted-foreground">
+                        <tr class="w-full">
+                            <th class="text-left">Origin Address</th>
+                            <th class="text-left">Destination Address</th>
+                            <th class="text-left">Cost Per Head</th>
+                            <th class="text-left">Trip Date</th>
+                            <th class="text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-card/50" *ngFor="let trip of expiredRoutines">
+                            <td>
+                                <p>{{ trip.originAddress }}</p>
+                            </td>
+                            <td>{{ trip.destinationAddress }}</td>
+                            <td>{{ helperService.formatNumber(trip.costPerHead) }}</td>
+                            <td>{{ helperService.formatDateTime(trip.createdOn || '') }}</td>
+                            <td>
+                                <div class="relative text-left" (click)="toggleDropdown(trip.id)">
+                                    <button class="text-gray-500 hover:text-gray-700" id="menu-button"
+                                        aria-expanded="true" aria-haspopup="true">
+                                        <svg-icon src="./assets/icons/heroicons/outline/ellipsis-vertical.svg"
+                                            [svgClass]="'h-4 w-4'">
+                                        </svg-icon>
+                                    </button>
+
+                                    <div *ngIf="activeDropdown === trip.id"
+                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer"
+                                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button"
+                                        tabindex="-1">
+                                        <div class="py-1" role="none">
+                                            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                role="menuitem" tabindex="-1" id="menu-item-0"
+                                                (click)="viewRoutineDetails(trip)">View Routine</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="py-10">
+                <app-empty-list-component *ngIf="!isLoading && expiredRoutines.length === 0"></app-empty-list-component>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -32,7 +32,11 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/clock.svg',
           label: 'Trips',
-          route: '/app/trips'
+          route: '/app/trips',
+          children: [
+            { label: 'Trip List', route: '/app/trips/list' },
+            { label: 'Routine List', route: '/app/trips/routine-list' },
+          ]
         },
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',

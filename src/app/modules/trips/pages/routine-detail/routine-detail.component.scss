@@ -1,0 +1,22 @@
+.routine-detail-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-container {
+    height: 400px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.routine-info {
+    padding: 20px;
+}
+
+.locations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}

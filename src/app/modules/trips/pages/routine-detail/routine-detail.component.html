@@ -1,0 +1,24 @@
+<div class="routine-detail-container">
+    <div *ngIf="isLoading" class="loading">
+        Loading...
+    </div>
+
+    <div *ngIf="!isLoading && routine" class="routine-content">
+        <div id="map" class="map-container"></div>
+
+        <div class="routine-info">
+            <h2>{{ routine.name }}</h2>
+            <!-- Add other routine details here -->
+            <div class="locations">
+                <div class="origin">
+                    <h3>Origin</h3>
+                    <p>{{ routine.originAddress }}</p>
+                </div>
+                <div class="destination">
+                    <h3>Destination</h3>
+                    <p>{{ routine.destinationAddress }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
