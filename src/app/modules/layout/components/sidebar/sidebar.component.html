@@ -5,12 +5,12 @@
     <div class="relative h-10">
       <div class="flex items-center" *ngIf="menuService.showSideBar">
         <a (click)="toggleSidebar()"
-          class="flex cursor-pointer items-center justify-center rounded bg-primary p-2 focus:outline-none focus:ring-1">
-          <svg-icon src="assets/icons/logo.svg"> </svg-icon>
+          class="flex cursor-pointer items-center justify-center rounded p-2 focus:outline-none focus:ring-1">
+          <svg-icon src="assets/images/funaride_logo.svg" [svgClass]="'h-full w-20'"> </svg-icon>
         </a>
-        <b class="ml-1 pl-2 text-sm font-bold text-foreground">
+        <!-- <b class="ml-1 pl-2 text-sm font-bold text-foreground">
           {{ appJson.displayName }}
-        </b>
+        </b> -->
       </div>
       <button (click)="toggleSidebar()"
         class="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded text-muted-foreground/50 transition-all duration-200 focus:outline-none hover:text-muted-foreground"
