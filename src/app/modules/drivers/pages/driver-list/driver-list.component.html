@@ -1,18 +1,41 @@
 <div class="driver-list-container">
     <h2 class="font-bold text-xl text-foreground mb-2">Driver List</h2>
 
-    <div class="filters">
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Search drivers...">
-        <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
-            <option value="all">All Drivers</option>
-            <option value="active">Active Drivers</option>
-            <option value="inactive">Inactive Drivers</option>
-        </select>
+    <div class="filters flex items-center gap-4">
+        <div class="search-filters flex gap-2">
+            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                placeholder="Search drivers...">
+            <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
+                <option value="all">All Drivers</option>
+                <option value="active">Active Drivers</option>
+                <option value="inactive">Inactive Drivers</option>
+            </select>
+        </div>
+        <div class="export-buttons flex gap-2">
+            <button (click)="exportToPDF()"
+                class="flex items-center gap-1 px-3 py-1 text-sm rounded bg-red-500/10 text-red-600 hover:bg-red-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ml-2">PDF</span>
+            </button>
+            <button (click)="exportToExcel()"
+                class="flex items-center gap-1 px-3 py-1 text-sm rounded bg-green-500/10 text-green-600 hover:bg-green-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ml-2">Excel</span>
+            </button>
+        </div>
     </div>
 
-    <div *ngIf="isLoading" class="loading">Loading...</div>
 
     <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div *ngIf="isLoading" class="py-10"><app-loading></app-loading> </div>
         <div class="overflow-x-auto">
             <table *ngIf="!isLoading && filteredDrivers.length > 0">
                 <thead class="border border-muted/20 text-xs text-muted-foreground">
@@ -25,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-card/50" *ngFor="let driver of filteredDrivers">
+                    <tr class="hover:bg-card/50 text-muted-foreground" *ngFor="let driver of filteredDrivers">
                         <td>
                             <div class="flex items-center">
                                 <img [src]="driver.profilePicture" alt="Profile" class="profile-pic">
@@ -66,13 +89,17 @@
         </div>
     </div>
 
-    <div *ngIf="!isLoading && filteredDrivers.length === 0" class="no-data">
-        No drivers found.
+    <div class="py-10">
+        <app-empty-list-component *ngIf="!isLoading && filteredDrivers.length === 0"></app-empty-list-component>
     </div>
 
-    <div class="pagination text-center py-4">
+    <!-- <div class="pagination text-center py-4">
         <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
         <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
-    </div>
+    </div> -->
+
+    <app-pagination-component [currentPage]="currentPage" [totalPages]="totalPages" [pageSize]="perPage"
+        [totalItems]="filteredDrivers.length" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
+    </app-pagination-component>
 </div>

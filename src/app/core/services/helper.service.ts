@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { formatDate, formatCurrency } from '@angular/common';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class HelperService {
-    constructor(private datePipe: DatePipe) { }
+    locale = 'en-UG';
+    currencyCode = 'UGX';
+    constructor() { }
 
-    formatDate(date: string): string {
-        return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
+    formatAppDate(date: string): string {
+        return formatDate(date, 'dd/MM/yyyy', this.locale) || '';
     }
 
     formatDateTime(date: string): string {
         if (!date) return '';
-        return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || '';
+        return formatDate(date, 'dd/MM/yyyy HH:mm', this.locale) || '';
     }
 
     formatNumber(value: number, decimalPlaces: number = 0): string {
@@ -22,5 +24,20 @@ export class HelperService {
             minimumFractionDigits: decimalPlaces,
             maximumFractionDigits: decimalPlaces
         });
+    }
+
+    public formatAppCurrency(currency: any): string {
+        try {
+            return formatCurrency(
+                Number(currency),
+                this.locale,
+                this.currencyCode,
+                this.currencyCode,
+                '1.0-0' // This formats the number with no 2 decimal places
+            ) || '';
+        } catch (error) {
+            console.log(error);
+            return '';
+        }
     }
 }

@@ -1,22 +1,21 @@
 <div class="routine-detail-container">
-    <div *ngIf="isLoading" class="loading">
-        Loading...
-    </div>
+    <h2 class="font-bold text-xl text-foreground mb-2">Routine Details</h2>
 
-    <div *ngIf="!isLoading && routine" class="routine-content">
-        <div id="map" class="map-container"></div>
+    <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div *ngIf="isLoading" class="py-10">
+            <app-loading></app-loading>
+        </div>
 
-        <div class="routine-info">
-            <h2>{{ routine.name }}</h2>
-            <!-- Add other routine details here -->
-            <div class="locations">
-                <div class="origin">
-                    <h3>Origin</h3>
-                    <p>{{ routine.originAddress }}</p>
-                </div>
-                <div class="destination">
-                    <h3>Destination</h3>
-                    <p>{{ routine.destinationAddress }}</p>
+        <div *ngIf="!isLoading && routine" class="routine-content">
+            <div id="map" class="map-container"></div>
+
+            <div class="routine-info">
+                <h2>{{ routine.name }}</h2>
+                <div class="info-list grid grid-cols-3 gap-4">
+                    <div class="info-item" *ngFor="let item of info">
+                        <p class="">{{ item.label }}</p>
+                        <p class="text-muted-foreground">{{ item.value }}</p>
+                    </div>
                 </div>
             </div>
         </div>

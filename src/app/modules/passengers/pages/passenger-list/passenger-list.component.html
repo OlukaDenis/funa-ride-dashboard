@@ -1,11 +1,39 @@
 <div class="container mx-auto p-4">
     <h1 class="font-bold text-xl text-foreground mb-2">Passenger List</h1>
 
-    <form [formGroup]="searchForm" class="mb-4">
-        <input type="text" formControlName="search" placeholder="Search passengers" class="w-full p-2 border rounded">
-    </form>
+    <div class="filters flex items-center gap-4 justify-between py-4">
+        <!-- <form [formGroup]="searchForm" class="mb-4">
+            <input type="text" formControlName="search" placeholder="Search passengers"
+                class="w-full p-2 border rounded">
+        </form> -->
+        <div></div>
+
+        <div class="export-buttons flex gap-2">
+            <button (click)="exportToPDF()"
+                class="flex items-center gap-1 px-3 py-1 text-sm rounded bg-red-500/10 text-red-600 hover:bg-red-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ml-2">PDF</span>
+            </button>
+            <button (click)="exportToExcel()"
+                class="flex items-center gap-1 px-3 py-1 text-sm rounded bg-green-500/10 text-green-600 hover:bg-green-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ml-2">Excel</span>
+            </button>
+        </div>
+    </div>
 
     <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+
+        <div *ngIf="isLoading" class="py-10"><app-loading></app-loading> </div>
+
         <div class="overflow-x-auto">
             <table
                 class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
@@ -27,7 +55,7 @@
                         <td class="">{{ user.firstName }} {{ user.lastName }}</td>
                         <td class="">{{ user.email }}</td>
                         <td class="">{{ user.phoneNumber }}</td>
-                        <td class="">{{ formatDate(user.dateCreated) }}</td>
+                        <td class="">{{ helpers.formatAppDate(user.dateCreated) }}</td>
                         <td class="">
                             <span class="rounded-[30px]  px-2 py-1 text-xs font-medium"
                                 [ngClass]="user.accountState ? 'text-green-800 bg-green-500/10' : 'bg-red-500/10 text-red-600'">
@@ -54,16 +82,21 @@
         </div>
 
         <div class="py-10">
-            <app-empty-list-component *ngIf="users.length === 0"></app-empty-list-component>
+            <app-empty-list-component *ngIf="!isLoading && users.length === 0"></app-empty-list-component>
         </div>
     </div>
 
 
-    <div class="mt-4 flex justify-between items-center">
+    <!-- <div class="mt-4 flex justify-between items-center">
         <button (click)="onPreviousPage()" [disabled]="currentPage === 1"
             class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Previous</button>
         <span>Page {{ currentPage }} of {{ Math.ceil(totalItems / pageSize) }}</span>
         <button (click)="onNextPage()" [disabled]="(currentPage + 1) * pageSize >= totalItems"
             class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
-    </div>
+    </div> -->
+
+
+    <app-pagination-component [currentPage]="currentPage" [totalPages]="totalPages" [pageSize]="perPage"
+        [totalItems]="totalItems" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
+    </app-pagination-component>
 </div>

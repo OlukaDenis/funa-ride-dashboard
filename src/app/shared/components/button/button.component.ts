@@ -26,6 +26,7 @@ export class ButtonComponent implements OnInit {
   full = input(false, {
     transform: (value: boolean | string) => (typeof value === 'string' ? value === '' : value),
   });
+  disabled = input<boolean>(false);
 
   @Output() buttonClick = new EventEmitter<void>();
 
@@ -86,7 +87,7 @@ export class ButtonComponent implements OnInit {
     large: 'shadow-lg',
   };
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.classes = cx(
@@ -96,6 +97,7 @@ export class ButtonComponent implements OnInit {
       this.shapeClasses[this.shape()],
       this.shadowClasses[this.shadow()],
       this.full() ? 'w-full' : '',
+      this.disabled() ? 'opacity-50 pointer-events-none' : '',
     );
   }
 

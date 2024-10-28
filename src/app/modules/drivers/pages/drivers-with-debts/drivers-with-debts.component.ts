@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { DriverService } from '@app/core/services/driver.service';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { Driver } from '../../models/driver.model';
+import { SharedModule } from '@app/shared/shared.module';
 
 @Component({
   selector: 'app-drivers-with-debts',
   standalone: true,
-  imports: [CommonModule, AngularSvgIconModule, FormsModule],
+  imports: [SharedModule],
   templateUrl: './drivers-with-debts.component.html',
   styleUrl: './drivers-with-debts.component.scss'
 })

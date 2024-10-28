@@ -1,33 +1,32 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DriverService } from '@app/core/services/driver.service';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { Driver } from '../../models/driver.model';
 import { PaginationChange } from '@app/shared/components/pagination-component/pagination-component.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { ExportService } from '@app/core/services/export.service';
 
 @Component({
-  selector: 'app-incomplete-driver-list',
+  selector: 'app-failed-driver-registrations',
   standalone: true,
   imports: [SharedModule],
-  templateUrl: './incomplete-driver-list.component.html',
-  styleUrl: './incomplete-driver-list.component.scss'
+  templateUrl: './failed-driver-registrations.component.html',
+  styleUrl: './failed-driver-registrations.component.scss'
 })
 
-export class IncompleteDriverListComponent implements OnInit {
+export class FailedDriverRegistrationsComponent implements OnInit {
   allDrivers: any[] = [];
+  // filteredDrivers: any[] = [];
   paginatedDrivers: any[] = [];
   currentPage = 1;
   totalPages = 1;
-  totalItems = 0;
   perPage = 10;
   isLoading = false;
   activeDropdown: string | null = null;
   searchTerm: string = '';
   statusFilter: string = 'all';
+  selectedDriver: any;
+  driverComment: string = '';
+  updatingDriver = false;
 
   constructor(
     private driverService: DriverService,
@@ -41,7 +40,7 @@ export class IncompleteDriverListComponent implements OnInit {
 
   loadDrivers(): void {
     this.isLoading = true;
-    this.driverService.getIncompleteDrivers().subscribe(
+    this.driverService.getFailedDrivers().subscribe(
       (response) => {
         this.allDrivers = response;
         this.applyFilters();
@@ -56,7 +55,6 @@ export class IncompleteDriverListComponent implements OnInit {
 
   applyFilters(): void {
     this.totalPages = Math.ceil(this.allDrivers.length / this.perPage);
-    this.totalItems = this.allDrivers.length;
     this.currentPage = 1;
     this.updatePaginatedDrivers();
   }
@@ -68,32 +66,11 @@ export class IncompleteDriverListComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    this.searchFilters();
-  }
-
-  searchFilters(): void {
-    const searchResults = this.allDrivers.filter(driver =>
-      (driver.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        driver.lastName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        driver.email.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
-      (this.statusFilter === 'all' || driver.accountState === this.statusFilter)
-    );
-
-    this.totalPages = Math.ceil(searchResults.length / this.perPage);
-    this.totalItems = searchResults.length
-    this.currentPage = 1;
-    this.paginatedDrivers = searchResults.slice(0, this.perPage);
+    this.applyFilters();
   }
 
   onStatusFilterChange(): void {
-    const results = this.allDrivers.filter(driver =>
-      (this.statusFilter === 'all' || driver.status === this.statusFilter)
-    );
-
-    this.totalPages = Math.ceil(results.length / this.perPage);
-    this.totalItems = results.length
-    this.currentPage = 1;
-    this.paginatedDrivers = results.slice(0, this.perPage);
+    this.applyFilters();
   }
 
   nextPage(): void {
@@ -130,8 +107,8 @@ export class IncompleteDriverListComponent implements OnInit {
   }
 
   /**
-  * Exports the driver list to PDF format
-  */
+ * Exports the driver list to PDF format
+ */
   exportToPDF(): void {
     const tableColumn = ["Name", "Email", "Phone", "Status"];
     const tableRows: any[] = [];
@@ -163,6 +140,55 @@ export class IncompleteDriverListComponent implements OnInit {
       'Status': driver.engaged ? 'Engaged' : 'Unengaged'
     }));
 
-    this.exportService.exportToExcel(data, 'Incomplete Registrations');
+    this.exportService.exportToExcel(data, 'Failed Registrations');
+  }
+
+  openDriverModal(driver: any) {
+    const modal = document.getElementById('update_failed_status_modal') as HTMLDialogElement;
+    modal.showModal();
+    this.selectedDriver = driver;
+    this.toggleDropdown(driver.documentId);
+  }
+
+  closeModal(): void {
+    const modal = document.getElementById('update_failed_status_modal') as HTMLDialogElement;
+    modal.close();
+  }
+
+  updateDriverStatus(): void {
+    if (!this.driverComment.trim() || !this.selectedDriver) {
+      return;
+    }
+
+    this.updatingDriver = true;
+    this.driverService.updatedFailedDriverStatus(
+      this.selectedDriver.documentId,
+      this.selectedDriver.email,
+      this.driverComment, true).subscribe({
+        next: (response) => {
+          // Update the driver's status in the list
+          const driverIndex = this.allDrivers.findIndex(
+            driver => driver.documentId === this.selectedDriver.documentId
+          );
+          if (driverIndex !== -1) {
+            this.allDrivers[driverIndex] = {
+              ...this.allDrivers[driverIndex],
+              engaged: true,
+              comment: this.driverComment
+            };
+          }
+
+          // Update paginated drivers
+          this.applyFilters();
+
+          console.log('Driver status updated:', response);
+          this.closeModal();
+          this.updatingDriver = false;
+        },
+        error: (error) => {
+          console.error('Error updating driver status:', error);
+          this.updatingDriver = false;
+        }
+      });
   }
 }

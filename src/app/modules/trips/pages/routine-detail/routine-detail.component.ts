@@ -5,11 +5,13 @@ import { Map, tileLayer, marker, polyline, LatLngExpression, LatLngBoundsLiteral
 import { TripService } from '@app/core/services/trip.service';
 import { RoutineModel } from '../../models/routine.model';
 import { Subscription } from 'rxjs';
+import { SharedModule } from '@app/shared/shared.module';
+import { HelperService } from '@app/core/services/helper.service';
 
 @Component({
   selector: 'app-routine-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [SharedModule],
   templateUrl: './routine-detail.component.html',
   styleUrl: './routine-detail.component.scss'
 })
@@ -18,10 +20,12 @@ export class RoutineDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   map: Map | null = null;
   isLoading = false;
   private subscription: Subscription = new Subscription();
+  info: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
-    private tripService: TripService
+    private tripService: TripService,
+    public helperService: HelperService
   ) { }
 
   ngOnInit(): void {
@@ -34,7 +38,18 @@ export class RoutineDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       next: (routine) => {
         this.routine = routine;
         this.isLoading = false;
-        console.log(this.routine);
+        this.info = [
+          { label: 'Origin', value: this.routine?.originAddress },
+          { label: 'Destination', value: this.routine?.destinationAddress },
+          { label: 'Cost Per Head', value: this.helperService.formatAppCurrency(this.routine?.costPerHead || 0) },
+          { label: 'Trip Date', value: this.helperService.formatDateTime(this.routine?.createdOn || '') },
+          { label: 'Departure Time', value: this.routine?.departureTime },
+          { label: 'Return Time', value: this.routine?.returnTime },
+          { label: 'Max Passengers', value: this.routine?.maxPassengers },
+          { label: 'Total Revenue', value: this.helperService.formatAppCurrency(this.routine?.totalRevenue || 0) },
+          { label: 'Commission Rate', value: this.routine?.commissionRate + '%' },
+          { label: 'Days', value: this.routine?.days?.days.join(', ') }
+        ];
       },
       error: (error) => {
         console.error('Error loading routine:', error);

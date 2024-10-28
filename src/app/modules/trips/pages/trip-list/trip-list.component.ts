@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { TripModel } from '../../models/trip.model';
 import { TripService } from '@app/core/services/trip.service';
 import { EmptyListComponentComponent } from '@app/shared/components/empty-list-component/empty-list-component.component';
+import { SharedModule } from '@app/shared/shared.module';
 
 
 @Component({
   selector: 'app-trip-list',
   standalone: true,
-  imports: [CommonModule, AngularSvgIconModule, FormsModule, EmptyListComponentComponent],
+  imports: [SharedModule],
   templateUrl: './trip-list.component.html',
   styleUrl: './trip-list.component.scss'
 })

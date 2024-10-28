@@ -1,9 +1,8 @@
-import { environment } from "src/environments/environment";
-
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Injectable } from "@angular/core";
-import { RoutineModel } from "@app/modules/trips/models/routine.model";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { RoutineModel } from '@app/modules/trips/models/routine.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +18,6 @@ export class TripService {
 
     public set setSelectedRoutine(routine: RoutineModel) {
         this.selectedRoutine.next(routine);
-        console.log(this.selectedRoutine.getValue());
     }
 
     getTrips(page: number, perPage: number): Observable<any> {

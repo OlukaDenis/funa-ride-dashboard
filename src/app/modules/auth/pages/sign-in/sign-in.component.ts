@@ -28,6 +28,7 @@ export class SignInComponent implements OnInit {
   passwordTextType = false;
   apiErrors: { [key: string]: string } = {};
   generalError: string = '';
+  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,12 +54,15 @@ export class SignInComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     this.authService.login(this.f['email'].value, this.f['password'].value).subscribe({
       next: () => {
+        this.isLoading = false;
         this.router.navigate(['/app/dashboard']);
       },
       error: (error) => {
         console.error('Login failed', error);
+        this.isLoading = false;
         if (error.error && typeof error.error === 'object') {
           const apiError = error.error as ApiError;
           this.generalError = apiError.message;

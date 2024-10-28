@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="hover:bg-card/50" *ngFor="let driver of filteredDrivers">
+                    <tr class="hover:bg-card/50 text-muted-foreground" *ngFor="let driver of filteredDrivers">
                         <td>
                             <div class="flex items-center">
                                 <img [src]="driver.profilePicture" alt="Profile" class="profile-pic">
@@ -62,8 +62,8 @@
         </div>
     </div>
 
-    <div *ngIf="!isLoading && filteredDrivers.length === 0" class="no-data">
-        No drivers found.
+    <div class="py-10">
+        <app-empty-list-component *ngIf="!isLoading && filteredDrivers.length === 0"></app-empty-list-component>
     </div>
 
     <div class="pagination text-center py-4" *ngIf=" filteredDrivers.length > 0">

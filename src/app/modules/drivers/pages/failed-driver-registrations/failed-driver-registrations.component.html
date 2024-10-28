@@ -1,16 +1,8 @@
 <div class="incomplete-driver-list-container">
-    <h2 class="font-bold text-xl text-foreground mb-2">Incomplete Registrations</h2>
+    <h2 class="font-bold text-xl text-foreground mb-2">Failed Registrations</h2>
 
     <div class="filters flex flex-row gap-4 w-full justify-between py-4">
-        <div class="search-filters flex gap-2 md:w-1/2">
-            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-                placeholder="Search drivers...">
-            <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-            </select>
-        </div>
+        <div></div>
         <div class="export-buttons flex gap-2 justify-end">
             <button (click)="exportToPDF()"
                 class="flex items-center gap-1 px-3 py-1 text-sm rounded bg-red-500/10 text-red-600 hover:bg-red-500/20">
@@ -33,38 +25,29 @@
         </div>
     </div>
 
-
-
     <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
         <div *ngIf="isLoading"><app-loading></app-loading> </div>
         <div class="overflow-x-auto">
             <table *ngIf="!isLoading && paginatedDrivers.length > 0">
                 <thead class="border border-muted/20 text-xs text-muted-foreground">
                     <tr>
-                        <ng-container>
-                            <th class="text-left">Name</th>
-                            <th class="text-left">Email</th>
-                            <th class="text-left">Phone</th>
-                            <th class="text-left">Status</th>
-                            <th class="text-left">Actions</th>
-                        </ng-container>
+                        <th class="text-left">Name</th>
+                        <th class="text-left">Email</th>
+                        <th class="text-left">Phone</th>
+                        <th class="text-left">Engaged</th>
+                        <th class="text-left">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="hover:bg-card/50 text-muted-foreground" *ngFor="let driver of paginatedDrivers">
-                        <td class="">
+                        <td>
                             <div class="flex items-center">
-                                <p>{{ driver.firstName }} {{ driver.lastName }}</p>
+                                <p>{{ driver.first_name }} {{ driver.last_name }}</p>
                             </div>
                         </td>
                         <td>{{ driver.email }}</td>
-                        <td>{{ driver.phoneNumber }}</td>
-                        <td>
-                            <span class="rounded-[30px] px-4 py-1 text-xs font-medium"
-                                [ngClass]="driver.status === 'pending' ? 'text-yellow-500 bg-yellow-500/10' : 'bg-red-500/10 text-red-600'">
-                                {{ driver.status.charAt(0).toUpperCase() + driver.status.slice(1) }}
-                            </span>
-                        </td>
+                        <td>{{ driver.phone_number }}</td>
+                        <td>{{ driver.engaged ? 'Yes' : 'No' }}</td>
                         <td>
                             <div class="relative text-left">
                                 <button (click)="toggleDropdown(driver.documentId)"
@@ -79,10 +62,9 @@
                                     class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                     role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                                     <div class="py-1" role="none">
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            role="menuitem" tabindex="-1" id="menu-item-0">View Driver</a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            role="menuitem" tabindex="-1" id="menu-item-1">Deactivate</a>
+                                        <a *ngIf="!driver.engaged" (click)="openDriverModal(driver)"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                            role="menuitem" tabindex="-1" id="menu-item-0">Complete</a>
                                     </div>
                                 </div>
                             </div>
@@ -104,6 +86,32 @@
     </div> -->
 
     <app-pagination-component [currentPage]="currentPage" [totalPages]="totalPages" [pageSize]="perPage"
-        [totalItems]="totalItems" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
+        [totalItems]="allDrivers.length" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
     </app-pagination-component>
+
+
+    <dialog id="update_failed_status_modal" class="modal">
+        <div class="modal-box bg-card md:w-1/2 w-11/12 max-w-5xl">
+            <div class="modal-header">
+                <h3 class=" text-lg font-bold text-foreground">Driver's Response</h3>
+                <p class="text-sm text-muted-foreground">Type the response you got after contacting the driver...
+                </p>
+                <textarea [(ngModel)]="driverComment" name="driverComment"
+                    class="w-full p-2 mt-2 mb-4 border rounded-md bg-background text-foreground" rows="4"
+                    placeholder="Enter your comment here...">
+                </textarea>
+            </div>
+            <div class="modal-action">
+                <app-button full impact="bold" tone="light" shape="rounded" size="medium" (buttonClick)="closeModal()">
+                    <span class="text-white ">Close</span>
+                </app-button>
+
+                <app-button full impact="bold" tone="primary" shape="rounded" size="medium"
+                    (buttonClick)="updateDriverStatus()">
+                    <span class="text-white" *ngIf="!updatingDriver">Update</span>
+                    <div class="text-white loading" *ngIf="updatingDriver"> Updating...</div>
+                </app-button>
+            </div>
+        </div>
+    </dialog>
 </div>

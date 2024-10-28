@@ -1,9 +1,9 @@
 <div class="trip-list-container">
     <h2 class="font-bold text-xl text-foreground mb-2">Trip List</h2>
 
-    <div *ngIf="isLoading" class="loading">Loading...</div>
-
     <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div *ngIf="isLoading" class="py-10"><app-loading></app-loading> </div>
+
         <div class="overflow-x-auto">
             <table *ngIf="!isLoading && filteredTrips.length > 0">
                 <thead class="border border-muted/20 text-xs text-muted-foreground">

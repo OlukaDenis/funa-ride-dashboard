@@ -6,11 +6,12 @@ import { RoutineModel } from '../../models/routine.model';
 import { TripService } from '@app/core/services/trip.service';
 import { HelperService } from '@app/core/services/helper.service';
 import { Router } from '@angular/router';
+import { SharedModule } from '@app/shared/shared.module';
 
 @Component({
   selector: 'app-routine-list',
   standalone: true,
-  imports: [EmptyListComponentComponent, SvgIconComponent, CommonModule],
+  imports: [SharedModule],
   templateUrl: './routine-list.component.html',
   styleUrl: './routine-list.component.scss'
 })

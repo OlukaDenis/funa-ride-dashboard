@@ -5,11 +5,14 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Driver } from '../../models/driver.model';
+import { PaginationChange, PaginationComponentComponent } from '@app/shared/components/pagination-component/pagination-component.component';
+import { SharedModule } from '@app/shared/shared.module';
+import { ExportService } from '@app/core/services/export.service';
 
 @Component({
   selector: 'app-driver-list',
   standalone: true,
-  imports: [CommonModule, AngularSvgIconModule, FormsModule],
+  imports: [SharedModule],
   templateUrl: './driver-list.component.html',
   styleUrl: './driver-list.component.scss'
 })
@@ -27,6 +30,7 @@ export class DriverListComponent implements OnInit {
 
   constructor(
     private driverService: DriverService,
+    private exportService: ExportService,
     private router: Router
   ) { }
 
@@ -89,6 +93,12 @@ export class DriverListComponent implements OnInit {
     }
   }
 
+  onPageChange(change: PaginationChange): void {
+    this.currentPage = change.currentPage;
+    this.perPage = change.pageSize;
+    this.loadDrivers();
+  }
+
   toggleDropdown(driverId: number): void {
     this.activeDropdown = this.activeDropdown === driverId ? null : driverId;
   }
@@ -100,5 +110,42 @@ export class DriverListComponent implements OnInit {
   deactivateDriver(driverId: number): void {
     console.log('Deactivate driver:', driverId);
     // Implement deactivate driver logic here
+  }
+
+  /**
+   * Exports the driver list to PDF format
+   */
+  exportToPDF(): void {
+    const tableColumn = ["Name", "Email", "Phone", "Status"];
+    const tableRows: any[] = [];
+
+    // Prepare the data
+    this.filteredDrivers.forEach(driver => {
+      const driverData = [
+        `${driver.firstName} ${driver.lastName}`,
+        driver.email,
+        driver.phoneNumber,
+        driver.accountState
+      ];
+      tableRows.push(driverData);
+    });
+
+    this.exportService.exportToPDF(tableColumn, tableRows);
+  }
+
+  /**
+   * Exports the driver list to Excel format
+   */
+  exportToExcel(): void {
+    // Prepare the data
+    const data = this.filteredDrivers.map(driver => ({
+      'First Name': driver.firstName,
+      'Last Name': driver.lastName,
+      'Email': driver.email,
+      'Phone': driver.phoneNumber,
+      'Status': driver.accountState
+    }));
+
+    this.exportService.exportToExcel(data, 'Drivers');
   }
 }
