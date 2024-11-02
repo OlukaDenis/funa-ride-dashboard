@@ -1,5 +1,5 @@
 <div class="incomplete-driver-list-container">
-    <h2 class="font-bold text-xl text-foreground mb-2">Incomplete Registrations</h2>
+    <h2 class="font-bold text-xl text-foreground mb-2">New Drivers</h2>
 
     <div class="filters flex flex-row gap-4 w-full justify-between py-4">
         <div class="search-filters flex gap-2 md:w-1/2">
@@ -45,6 +45,7 @@
                             <th class="text-left">Name</th>
                             <th class="text-left">Email</th>
                             <th class="text-left">Phone</th>
+                            <th class="text-left">Vehicle</th>
                             <th class="text-left">Status</th>
                             <th class="text-left">Actions</th>
                         </ng-container>
@@ -54,11 +55,13 @@
                     <tr class="hover:bg-card/50 text-muted-foreground" *ngFor="let driver of paginatedDrivers">
                         <td class="">
                             <div class="flex items-center">
+                                <img [src]="driver.profileImage" alt="Profile" class="profile-pic">
                                 <p>{{ driver.firstName }} {{ driver.lastName }}</p>
                             </div>
                         </td>
                         <td>{{ driver.email }}</td>
                         <td>{{ driver.phoneNumber }}</td>
+                        <td>{{driver.vehicleName}} ({{driver.licensePlate}})</td>
                         <td>
                             <span class="rounded-[30px] px-4 py-1 text-xs font-medium"
                                 [ngClass]="driver.status === 'pending' ? 'text-yellow-500 bg-yellow-500/10' : 'bg-red-500/10 text-red-600'">
@@ -79,10 +82,11 @@
                                     class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                     role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                                     <div class="py-1" role="none">
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            role="menuitem" tabindex="-1" id="menu-item-0">View Driver</a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            role="menuitem" tabindex="-1" id="menu-item-1">Deactivate</a>
+                                        <a *ngIf="driver.status === 'pending'" (click)="openDriverModal(driver)"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                            role="menuitem" tabindex="-1" id="menu-item-0">Reject Driver</a>
+                                        <!-- <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            role="menuitem" tabindex="-1" id="menu-item-1">Deactivate</a> -->
                                     </div>
                                 </div>
                             </div>
@@ -106,4 +110,29 @@
     <app-pagination-component [currentPage]="currentPage" [totalPages]="totalPages" [pageSize]="perPage"
         [totalItems]="totalItems" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
     </app-pagination-component>
+
+    <dialog id="update_driver_status_modal" class="modal">
+        <div class="modal-box bg-card md:w-1/2 w-11/12 max-w-5xl">
+            <div class="modal-header">
+                <h3 class=" text-lg font-bold text-foreground">Reject Driver</h3>
+                <p class="text-sm text-muted-foreground pt-2 pb-4">Provide the reason for rejecting the driver below
+                </p>
+                <textarea [(ngModel)]="driverComment" name="driverComment"
+                    class="w-full p-2 mt-2 mb-4 border rounded-md bg-background text-foreground" rows="4"
+                    placeholder="Enter reason here...">
+                </textarea>
+            </div>
+            <div class="modal-action">
+                <app-button full impact="bold" tone="light" shape="rounded" size="medium" (buttonClick)="closeModal()">
+                    <span class="text-white ">Cancel</span>
+                </app-button>
+
+                <app-button full impact="bold" tone="primary" shape="rounded" size="medium"
+                    (buttonClick)="rejectDriver()">
+                    <span class="text-white" *ngIf="!updatingDriver">Reject</span>
+                    <div class="text-white loading" *ngIf="updatingDriver"> Updating...</div>
+                </app-button>
+            </div>
+        </div>
+    </dialog>
 </div>

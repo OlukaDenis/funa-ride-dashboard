@@ -2,7 +2,7 @@
     <h2 class="font-bold text-xl text-foreground mb-2">Driver List</h2>
 
     <div class="filters flex items-center gap-4">
-        <div class="search-filters flex gap-2">
+        <div class="search-filters flex gap-2 md:w-1/2">
             <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
                 placeholder="Search drivers...">
             <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
@@ -43,6 +43,7 @@
                         <th class="text-left">Name</th>
                         <th class="text-left">Email</th>
                         <th class="text-left">Phone</th>
+                        <th class="text-left">Vehicle</th>
                         <th class="text-left">Status</th>
                         <th class="text-left">Actions</th>
                     </tr>
@@ -57,6 +58,7 @@
                         </td>
                         <td>{{ driver.email }}</td>
                         <td>{{ driver.phoneNumber }}</td>
+                        <td>{{driver.car.vehicleName}} ({{driver.car.regNo}})</td>
                         <td class="">
                             <span class="rounded-[30px] px-2 py-1 text-xs font-medium"
                                 [ngClass]="driver.accountState === 'active' ? 'text-green-800 bg-green-500/10' : 'bg-red-500/10 text-red-600'">
@@ -73,12 +75,13 @@
                                 </button>
                                 <div *ngIf="activeDropdown === driver.driverId"
                                     class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                                    <div class="py-1" role="menu" aria-orientation="vertical"
-                                        aria-labelledby="options-menu">
-                                        <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            (click)="viewDriver(driver.driverId)">View Driver</div>
-                                        <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            (click)="deactivateDriver(driver.driverId)">Deactivate</div>
+                                    <div class="py-1" role="menu">
+                                        <a (click)="viewDriver(driver.driverId)"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                            role="menuitem" tabindex="-1" id="menu-item-0">View Driver</a>
+                                        <a (click)="openResetModal(driver)"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                                            role="menuitem" tabindex="-1" id="menu-item-0">Reset Password</a>
                                     </div>
                                 </div>
                             </div>
@@ -102,4 +105,29 @@
     <app-pagination-component [currentPage]="currentPage" [totalPages]="totalPages" [pageSize]="perPage"
         [totalItems]="filteredDrivers.length" [pageSizeOptions]="[5, 10, 25, 50]" (pageChange)="onPageChange($event)">
     </app-pagination-component>
+
+    <dialog id="reset_password_modal" class="modal">
+        <div class="modal-box bg-card md:w-1/4 w-10/12 max-w-5xl">
+            <div class="modal-header">
+                <h3 class=" text-lg font-bold text-foreground">Reset Driver Password</h3>
+                <p class="text-sm text-muted-foreground">"Do you want to reset this driver's password?
+                </p>
+            </div>
+            <div class="modal-action">
+                <app-button full impact="bold" tone="light" shape="rounded" size="medium" (buttonClick)="closeModal()">
+                    <span class="text-white ">Cancel</span>
+                </app-button>
+
+                <app-button full impact="bold" tone="primary" shape="rounded" size="medium"
+                    (buttonClick)="resetDriverPassword()">
+                    <span class="text-white" *ngIf="!updatingDriver">Reset</span>
+
+                    <div class="text-white px-8" *ngIf="updatingDriver">
+                        <span class="loading w-4 h-4"></span>
+                        <!-- <span> Updating...</span> -->
+                    </div>
+                </app-button>
+            </div>
+        </div>
+    </dialog>
 </div>

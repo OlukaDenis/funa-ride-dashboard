@@ -20,7 +20,7 @@ export class Menu {
           route: '/app/drivers',
           children: [
             { label: 'List', route: '/app/drivers/list' },
-            { label: 'Incomplete Registrations', route: '/app/drivers/incomplete' },
+            { label: 'New Drivers', route: '/app/drivers/incomplete' },
             { label: 'Failed Registrations', route: '/app/drivers/failed' },
             { label: 'Drivers with Debts', route: '/app/drivers/with-debts' },
           ],

@@ -28,6 +28,9 @@ export class IncompleteDriverListComponent implements OnInit {
   activeDropdown: string | null = null;
   searchTerm: string = '';
   statusFilter: string = 'all';
+  selectedDriver: any;
+  driverComment: string = '';
+  updatingDriver = false;
 
   constructor(
     private driverService: DriverService,
@@ -164,5 +167,57 @@ export class IncompleteDriverListComponent implements OnInit {
     }));
 
     this.exportService.exportToExcel(data, 'Incomplete Registrations');
+  }
+
+  openDriverModal(driver: any) {
+    const modal = document.getElementById('update_driver_status_modal') as HTMLDialogElement;
+    modal.showModal();
+    this.selectedDriver = driver;
+    this.toggleDropdown(driver.documentId);
+  }
+
+  closeModal(): void {
+    const modal = document.getElementById('update_driver_status_modal') as HTMLDialogElement;
+    modal.close();
+  }
+
+  rejectDriver(): void {
+    if (!this.driverComment.trim() || !this.selectedDriver) {
+      return;
+    }
+
+    this.updatingDriver = true;
+    this.driverService.rejectDriver(
+      this.selectedDriver.documentId,
+      this.selectedDriver.email,
+      this.driverComment,
+      'rejected'
+    ).subscribe({
+      next: (response) => {
+        // Update the driver's status in the list
+        const driverIndex = this.allDrivers.findIndex(
+          driver => driver.documentId === this.selectedDriver.documentId
+        );
+        if (driverIndex !== -1) {
+          this.allDrivers[driverIndex] = {
+            ...this.allDrivers[driverIndex],
+            status: 'rejected',
+            comment: this.driverComment
+          };
+        }
+
+        // Update paginated drivers
+        this.applyFilters();
+
+        console.log('Driver status updated:', response);
+        this.driverComment = '';
+        this.closeModal();
+        this.updatingDriver = false;
+      },
+      error: (error) => {
+        console.error('Error updating driver status:', error);
+        this.updatingDriver = false;
+      }
+    });
   }
 }

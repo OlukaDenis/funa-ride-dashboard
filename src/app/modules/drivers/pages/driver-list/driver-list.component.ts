@@ -27,6 +27,8 @@ export class DriverListComponent implements OnInit {
   activeDropdown: number | null = null;
   searchTerm: string = '';
   statusFilter: string = 'all';
+  selectedDriver!: Driver;
+  updatingDriver = false;
 
   constructor(
     private driverService: DriverService,
@@ -147,5 +149,37 @@ export class DriverListComponent implements OnInit {
     }));
 
     this.exportService.exportToExcel(data, 'Drivers');
+  }
+
+  openResetModal(driver: Driver) {
+    const modal = document.getElementById('reset_password_modal') as HTMLDialogElement;
+    modal.showModal();
+    this.selectedDriver = driver;
+    this.toggleDropdown(driver.driverId);
+  }
+
+  closeModal(): void {
+    const modal = document.getElementById('reset_password_modal') as HTMLDialogElement;
+    modal.close();
+  }
+
+  resetDriverPassword(): void {
+    this.updatingDriver = true;
+    this.driverService.resetDriverPassword(
+      this.selectedDriver.email,
+      this.selectedDriver.phoneNumber,
+      this.selectedDriver.firstName
+    ).subscribe({
+      next: (response) => {
+        // Update paginated drivers
+        console.log('New password has been sent to the driver.', response);
+        this.closeModal();
+        this.updatingDriver = false;
+      },
+      error: (error) => {
+        console.error('Error updating driver status:', error);
+        this.updatingDriver = false;
+      }
+    });
   }
 }

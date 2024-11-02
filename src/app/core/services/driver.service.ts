@@ -13,56 +13,54 @@ export class DriverService {
     constructor(private http: HttpClient) { }
 
     getDrivers(page: number, perPage: number, order: string = 'DESC', active?: boolean, failed?: boolean): Observable<any> {
-        let params = new HttpParams()
-            .set('page', page.toString())
-            .set('perPage', perPage.toString())
-            .set('order', order);
+        const params: any = {
+            'page': page?.toString() || '1',
+            'perPage': perPage?.toString() || '10',
+            'order': order
+        }
 
         if (active !== undefined) {
-            params = params.set('active', active.toString());
+            params['active'] = active;
         }
 
         if (failed) {
-            params = params.set('failed', failed.toString());
+            params['failed'] = failed;
         }
 
         return this.http.get<any>(`${this.apiUrl}/admin/drivers`, { params });
     }
 
     getIncompleteDrivers(page?: number, perPage?: number, order: string = 'DESC', active?: boolean, failed: boolean = false): Observable<any> {
-        let params = new HttpParams()
-            .set('page', page?.toString() || '1')
-            .set('perPage', perPage?.toString() || '10')
-            .set('order', order);
+        const params: any = {
+            'page': page?.toString() || '1',
+            'perPage': perPage?.toString() || '10',
+            'order': order,
+            'pending': true
+        }
 
         if (active !== undefined) {
-            params = params.set('active', active.toString());
+            params['active'] = active;
         }
-        params = params.set('pending', 'true');
 
         return this.http.get<any>(`${this.apiUrl}/admin/drivers`, { params });
     }
 
     getFailedDrivers(page?: number, perPage?: number, order: string = 'DESC', active?: boolean, failed: boolean = false): Observable<any> {
-        let params = new HttpParams()
-            .set('page', page?.toString() || '1')
-            .set('perPage', perPage?.toString() || '10')
-            .set('order', order);
+        const params: any = {
+            'page': page?.toString() || '1',
+            'perPage': perPage?.toString() || '10',
+            'order': order,
+            'failed': true
+        }
 
         if (active !== undefined) {
-            params = params.set('active', active.toString());
+            params['active'] = active
         }
-        params = params.set('failed', 'true');
 
         return this.http.get<any>(`${this.apiUrl}/admin/drivers`, { params });
     }
 
     getDriversWithDebts(page: number, perPage: number, order: string = 'DESC', active?: boolean): Observable<any> {
-        let params = new HttpParams()
-            .set('page', page.toString())
-            .set('perPage', perPage.toString())
-            .set('order', order);
-
         return this.http.get<any>(`${this.apiUrl}/drivers/debts`);
     }
 
@@ -70,15 +68,40 @@ export class DriverService {
         return this.http.get<Driver>(`${this.apiUrl}/drivers/${driverId}`);
     }
 
-    updatedFailedDriverStatus(driverId: number, email: string, comment: string, status: boolean): Observable<any> {
-        console.log(driverId, email, comment, status);
-        let params = new HttpParams()
+    completeDriverSignup(driverId: number, email: string, comment: string, status: boolean): Observable<any> {
+        return this.updateDriverStatus(driverId, email, comment, status.toString(), true);
+    }
+
+    rejectDriver(driverId: number, email: string, comment: string, status: string): Observable<any> {
+        return this.updateDriverStatus(driverId, email, comment, 'rejected', false);
+    }
+
+    private updateDriverStatus(driverId: number, email: string, comment: string, status: string, failedSignUp: boolean): Observable<any> {
+        // const payload: any = {
+        //     'documentId': driverId.toString(),
+        //     'failedSignUp': failedSignUp,
+        //     'email': email,
+        //     'status': status,
+        //     'comment': comment
+        // }
+
+        let payload = new HttpParams()
             .set('documentId', driverId.toString())
-            .set('failedSignUp', true)
+            .set('failedSignUp', failedSignUp)
             .set('email', email)
             .set('status', status.toString())
             .set('comment', comment);
 
-        return this.http.post<any>(`${this.apiUrl}/admin/drivers/status`, params);
+        return this.http.post<any>(`${this.apiUrl}/admin/drivers/status`, payload);
     }
+
+    resetDriverPassword(email: string, phone: string, firstName: string): Observable<any> {
+        let payload = new HttpParams()
+            .set('phoneNumber', phone)
+            .set('firstName', firstName)
+            .set('email', email);
+
+        return this.http.post<any>(`${this.apiUrl}/admin/drivers/reset`, payload);
+    }
+
 }

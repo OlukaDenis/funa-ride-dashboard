@@ -161,7 +161,7 @@ export class FailedDriverRegistrationsComponent implements OnInit {
     }
 
     this.updatingDriver = true;
-    this.driverService.updatedFailedDriverStatus(
+    this.driverService.completeDriverSignup(
       this.selectedDriver.documentId,
       this.selectedDriver.email,
       this.driverComment, true).subscribe({
