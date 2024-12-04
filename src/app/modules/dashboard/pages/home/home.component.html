@@ -5,4 +5,30 @@
             </app-dash-card>
         </ng-container>
     </div>
+
+    <div *ngIf="!isLoading">
+
+        <div *ngIf="monthlyData.length === 0">No trips data available for the selected period.</div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mt-4">
+
+        <div *ngIf="monthlyData.length > 0" class="p-5">
+            <h3>Trips Summary</h3>
+            <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis">
+            </apx-chart>
+        </div>
+
+        <div *ngIf="userData.length > 0" class="p-5">
+            <h3>Users Summary</h3>
+            <apx-chart [series]="userChartOptions.series" [chart]="userChartOptions.chart"
+                [xaxis]="userChartOptions.xaxis"></apx-chart>
+        </div>
+
+        <div *ngIf="driverData.length > 0" class="p-5">
+            <h3>Drivers Summary</h3>
+            <apx-chart [series]="driverChartOptions.series" [chart]="driverChartOptions.chart"
+                [xaxis]="driverChartOptions.xaxis"></apx-chart>
+        </div>
+    </div>
 </div>
