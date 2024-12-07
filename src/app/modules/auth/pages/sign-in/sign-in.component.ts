@@ -13,7 +13,8 @@ import { ApiError } from 'src/app/core/models/api-error.model';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
   standalone: true,
-  imports: [FormsModule,
+  imports: [
+    FormsModule,
     ReactiveFormsModule,
     RouterLink,
     AngularSvgIconModule,

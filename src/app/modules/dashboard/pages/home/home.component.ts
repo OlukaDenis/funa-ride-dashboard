@@ -5,17 +5,31 @@ import { DashCardComponent } from "../../components/dash-card/dash-card.componen
 import { DashboardService } from '../../services/dashboard.service';
 import { ChartComponent } from "ng-apexcharts";
 import { ApexChart, ApexAxisChartSeries } from "ng-apexcharts";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from "../../../../shared/shared.module";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, DashCardComponent, ChartComponent],
+  imports: [
+    CommonModule,
+    DashCardComponent,
+    ChartComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   items: DashCard[] = [];
+
   isLoading = true;
+  loadingTrips = true;
+  loadingUsers = true;
+  loadingDrivers = true;
+
   chartOptions: any;
   monthlyData: { count: number; period: string }[] = [];
   userData: { count: number; period: string }[] = [];
@@ -23,13 +37,28 @@ export class HomeComponent implements OnInit {
   userChartOptions: any;
   driverChartOptions: any;
 
+  startYear = 2020;
+  selectedTripYear: number = this.startYear;
+  selectedUserYear: number = this.startYear;
+  selectedDriverYear: number = this.startYear;
+
+  currentYear: number = new Date().getFullYear();
+  years: number[] = [];
+
   constructor(private dashboardService: DashboardService) { }
 
   ngOnInit(): void {
+    this.generateYears();
+
     this.fetchDashInsights();
     this.fetchTripsSummary();
     this.fetchUsersSummary();
     this.fetchDriversSummary();
+  }
+
+  generateYears() {
+    const endYear = this.currentYear;
+    this.years = Array.from({ length: endYear - this.startYear + 1 }, (_, i) => this.startYear + i);
   }
 
   fetchDashInsights() {
@@ -63,35 +92,59 @@ export class HomeComponent implements OnInit {
     );
   }
 
+  onTripYearChange(value: number) {
+    this.selectedTripYear = value;
+    this.fetchTripsSummary();
+  }
+
+  onUserYearChange(year: number) { // Add this method
+    this.selectedUserYear = year;
+    this.fetchUsersSummary();
+  }
+
+  onDriverYearChange(year: number) { // Add this method
+    this.selectedDriverYear = year;
+    this.fetchDriversSummary();
+  }
+
   fetchTripsSummary() {
-    this.dashboardService.getTripsSummary('2021-01-01', '2021-12-31').subscribe({
+    this.loadingTrips = true;
+    this.dashboardService.getTripsSummary(`${this.selectedTripYear}-01-01`, `${this.selectedTripYear}-12-31`).subscribe({
       next: (res: any) => {
         this.processTripsData(res);
+        this.loadingTrips = false;
       },
       error: (err: any) => {
         console.log(err);
+        this.loadingTrips = false;
       }
     })
   }
 
   fetchUsersSummary() {
-    this.dashboardService.getUsersSummary('2020-01-01', '2020-12-31').subscribe({
+    this.loadingUsers = true;
+    this.dashboardService.getUsersSummary(`${this.selectedUserYear}-01-01`, `${this.selectedUserYear}-12-31`).subscribe({
       next: (res: any) => {
         this.processUsersData(res);
+        this.loadingUsers = false;
       },
       error: (err: any) => {
         console.log(err);
+        this.loadingUsers = false;
       }
     });
   }
 
   fetchDriversSummary() {
-    this.dashboardService.getDriversSummary('2021-01-01', '2021-12-31').subscribe({
+    this.loadingDrivers = true;
+    this.dashboardService.getDriversSummary(`${this.selectedDriverYear}-01-01`, `${this.selectedDriverYear}-12-31`).subscribe({
       next: (res: any) => {
         this.processDriversData(res);
+        this.loadingDrivers = false;
       },
       error: (err: any) => {
         console.log(err);
+        this.loadingDrivers = false;
       }
     });
   }

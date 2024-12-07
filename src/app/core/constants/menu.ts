@@ -39,16 +39,16 @@ export class Menu {
             { label: 'Routine List', route: '/app/trips/routine-list' },
           ]
         },
-        {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'Reports',
-          route: '/app/reports'
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/truck.svg',
-          label: 'Bus',
-          route: '/app/bus'
-        },
+        // {
+        //   icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+        //   label: 'Reports',
+        //   route: '/app/reports'
+        // },
+        // {
+        //   icon: 'assets/icons/heroicons/outline/truck.svg',
+        //   label: 'Bus',
+        //   route: '/app/bus'
+        // },
       ]
     },
     // {
