@@ -6,12 +6,14 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { LoadingComponent } from './components/loading/loading.component';
 import { EmptyListComponentComponent } from './components/empty-list-component/empty-list-component.component';
 import { ButtonComponent } from './components/button/button.component';
+import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 @NgModule({
     declarations: [
         PaginationComponentComponent,
         LoadingComponent,
         EmptyListComponentComponent,
+        DateRangePickerComponent
     ],
     imports: [
         CommonModule,
@@ -26,7 +28,8 @@ import { ButtonComponent } from './components/button/button.component';
         CommonModule,
         FormsModule,
         AngularSvgIconModule,
-        ButtonComponent
+        ButtonComponent,
+        DateRangePickerComponent
     ],
     providers: [
 

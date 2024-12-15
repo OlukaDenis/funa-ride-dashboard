@@ -1,0 +1,52 @@
+<div class="relative w-full max-w-sm">
+    <!-- Trigger -->
+    <button class="w-full p-3 rounded-lg border border-gray-300 text-left min-w-80" (click)="toggleDatePicker()">
+        <span>{{ selectedRange || 'Select Date Range' }}</span>
+    </button>
+
+    <!-- Date Picker Dropdown -->
+    <div *ngIf="showDatePicker" class="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        <div class="flex items-center justify-between p-3">
+            <!-- Previous Month -->
+            <button (click)="prevMonth()" class="text-gray-600">
+                &larr;
+            </button>
+
+            <!-- Current Month -->
+            <span class="font-semibold">{{ currentMonth | date: 'MMMM yyyy' }}</span>
+
+            <!-- Next Month -->
+            <button (click)="nextMonth()" class="text-gray-600">
+                &rarr;
+            </button>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1 p-3 text-center text-sm">
+            <!-- Weekday Labels -->
+            <div *ngFor="let day of weekdays" class="font-semibold text-gray-500">
+                {{ day }}
+            </div>
+
+            <!-- Days of the Month -->
+            <div *ngFor="let day of days" [class.bg-blue-500]="isSelected(day)" [class.text-white]="isSelected(day)"
+                [class.bg-blue-100]="isInHoverRange(day)"
+                [class.text-gray-700]="!isSelected(day) && !isInHoverRange(day)"
+                [class.cursor-not-allowed]="!isSelectable(day)" [class.opacity-50]="!isSelectable(day)"
+                class="p-2 rounded-lg cursor-pointer hover:bg-blue-100" (click)="selectDate(day)"
+                (mouseenter)="onHover(day)" (mouseleave)="onHover(null)">
+                {{ day.getDate() }}
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end p-3">
+            <button class="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100"
+                (click)="clearSelection()">
+                Clear
+            </button>
+            <button class="ml-2 px-4 py-2 text-sm text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                (click)="applySelection()" [disabled]="!selectedStartDate || !selectedEndDate">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>

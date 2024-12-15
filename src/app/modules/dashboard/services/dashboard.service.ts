@@ -15,26 +15,29 @@ export class DashboardService {
         return this.http.get<any>(`${this.apiUrl}/admin/totals`);
     }
 
-    getTripsSummary(from: string, to: string): Observable<any> {
+    getTripsSummary(from: string, to: string, criteria: string): Observable<any> {
         let params = new HttpParams()
             .set('from', from)
-            .set('to', to);
+            .set('to', to)
+            .set('criteria', criteria);
 
         return this.http.get<any>(`${this.apiUrl}/rides/statistics`, { params });
     }
 
-    getUsersSummary(from: string, to: string): Observable<any> {
+    getUsersSummary(from: string, to: string, criteria: string): Observable<any> {
         let params = new HttpParams()
             .set('from', from)
-            .set('to', to);
+            .set('to', to)
+            .set('criteria', criteria);
 
         return this.http.get<any>(`${this.apiUrl}/users/statistics`, { params });
     }
 
-    getDriversSummary(from: string, to: string): Observable<any> {
+    getDriversSummary(from: string, to: string, criteria: string): Observable<any> {
         let params = new HttpParams()
             .set('from', from)
-            .set('to', to);
+            .set('to', to)
+            .set('criteria', criteria);
 
         return this.http.get<any>(`${this.apiUrl}/drivers/statistics`, { params });
     }

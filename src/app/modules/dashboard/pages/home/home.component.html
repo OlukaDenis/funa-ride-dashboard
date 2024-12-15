@@ -8,15 +8,43 @@
 
 
     <div class="flex flex-col rounded-lg bg-background p-8 mt-8">
-        <div class="grid grid-cols-2 gap-3 mt-4">
+        <!-- CHIP PERIOD TOGGLE -->
+        <div class="flex flex-row justify-end">
+            <div class="flex items-center space-x-2 w-52 bg-gray-200 p-1 rounded-full">
+                <!-- Chip Toggle -->
+                <button id="monthly"
+                    class="w-1/2 px-4 py-2 text-sm font-medium rounded-full focus:outline-none transition"
+                    [ngClass]="isCriteriaMonthly ? 'text-white bg-primary' : 'bg-transparent text-primary'"
+                    (click)="toggleCombined()">
+                    Monthly
+                </button>
+                <button id="weekly"
+                    class="w-1/2 px-4 py-2 text-sm font-medium rounded-full focus:outline-none transition"
+                    [ngClass]="isCriteriaMonthly ? 'bg-transparent text-primary' : 'text-white bg-primary'"
+                    (click)="toggleCombined()">
+                    Weekly
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
             <div>
-                <div class="p-5">
+                <div class="p-5 w-full">
                     <h3 class="mb-2 text-muted-foreground/80">Trips Summary</h3>
-                    <select class="select select-bordered bg-background" id="tripYearPicker"
-                        [(ngModel)]="selectedTripYear" (ngModelChange)="onTripYearChange($event)">
-                        <option disabled selected>Select Year</option>
-                        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-                    </select>
+                    <div class="flex flex-row justify-end">
+                        <select class="select select-bordered bg-background w-52" id="tripYearPicker"
+                            [(ngModel)]="selectedTripYear" (ngModelChange)="onTripYearChange($event)"
+                            *ngIf="isCriteriaMonthly">
+                            <option disabled selected>Select Year</option>
+                            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                        </select>
+
+                        <app-date-range-picker *ngIf="!isCriteriaMonthly"
+                            (dateRangeSelected)="onTripDateRangeSelected($event)"></app-date-range-picker>
+                    </div>
+
+
+
                 </div>
 
                 <div class="py-5" *ngIf="loadingTrips">
@@ -24,7 +52,7 @@
                 </div>
 
                 <div *ngIf="!loadingTrips">
-                    <div *ngIf="monthlyData.length > 0; else noDataTemplate" class="p-5">
+                    <div *ngIf="tripData.length > 0; else noDataTemplate" class="p-5">
                         <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
                             [xaxis]="chartOptions.xaxis">
                         </apx-chart>
@@ -40,13 +68,19 @@
             </div>
 
             <div>
-                <div class="p-5">
+                <div class="p-5 w-full">
                     <h3 class="mb-2 text-muted-foreground/80">Users Summary</h3>
-                    <select class="select select-bordered bg-background" id="tripYearPicker"
-                        [(ngModel)]="selectedUserYear" (ngModelChange)="onUserYearChange($event)">
-                        <option disabled selected>Select Year</option>
-                        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-                    </select>
+                    <div class="flex flex-row justify-end">
+                        <select class="select select-bordered bg-background w-52" id="tripYearPicker"
+                            [(ngModel)]="selectedUserYear" (ngModelChange)="onUserYearChange($event)"
+                            *ngIf="isCriteriaMonthly">
+                            <option disabled selected>Select Year</option>
+                            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                        </select>
+
+                        <app-date-range-picker *ngIf="!isCriteriaMonthly"
+                            (dateRangeSelected)="onUserDateRangeSelected($event)"></app-date-range-picker>
+                    </div>
                 </div>
 
                 <div class="py-5" *ngIf="loadingUsers">
@@ -70,13 +104,21 @@
             </div>
 
             <div>
-                <div class="p-5">
+                <div class="p-5 w-full">
                     <h3 class="mb-2 text-muted-foreground/80">Drivers Summary</h3>
-                    <select class="select select-bordered bg-background" id="tripYearPicker"
-                        [(ngModel)]="selectedDriverYear" (ngModelChange)="onDriverYearChange($event)">
-                        <option disabled selected>Select Year</option>
-                        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-                    </select>
+
+                    <div class="flex flex-row justify-end">
+                        <select class="select select-bordered bg-background w-52" id="tripYearPicker"
+                            [(ngModel)]="selectedDriverYear" (ngModelChange)="onDriverYearChange($event)"
+                            *ngIf="isCriteriaMonthly">
+                            <option disabled selected>Select Year</option>
+                            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                        </select>
+
+                        <app-date-range-picker *ngIf="!isCriteriaMonthly"
+                            (dateRangeSelected)="onDriverDateRangeSelected($event)"></app-date-range-picker>
+                    </div>
+
                 </div>
 
                 <div class="py-5" *ngIf="loadingDrivers">

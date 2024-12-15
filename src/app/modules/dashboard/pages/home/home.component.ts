@@ -7,6 +7,7 @@ import { ChartComponent } from "ng-apexcharts";
 import { ApexChart, ApexAxisChartSeries } from "ng-apexcharts";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from "../../../../shared/shared.module";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-home',
@@ -31,19 +32,35 @@ export class HomeComponent implements OnInit {
   loadingDrivers = true;
 
   chartOptions: any;
-  monthlyData: { count: number; period: string }[] = [];
-  userData: { count: number; period: string }[] = [];
-  driverData: { count: number; period: string }[] = [];
+  tripData: any[] = [];
+  userData: any[] = [];
+  driverData: any[] = [];
   userChartOptions: any;
   driverChartOptions: any;
 
   startYear = 2020;
-  selectedTripYear: number = this.startYear;
-  selectedUserYear: number = this.startYear;
-  selectedDriverYear: number = this.startYear;
-
   currentYear: number = new Date().getFullYear();
   years: number[] = [];
+
+  selectedTripYear: number = this.currentYear;
+  selectedUserYear: number = this.currentYear;
+  selectedDriverYear: number = this.currentYear;
+
+  thirtyDaysAgo: string = moment().subtract(30, 'days').format('YYYY-MM-DD');
+  today: string = moment().format('YYYY-MM-DD');
+
+  isCriteriaMonthly = true;
+  selectedTripRange: { start: string; end: string } = { start: this.thirtyDaysAgo, end: this.today };
+  selectedUserRange: { start: string; end: string } = { start: this.thirtyDaysAgo, end: this.today };
+  selectedDriverRange: { start: string; end: string } = { start: this.thirtyDaysAgo, end: this.today };
+
+  minToDate: string = '';
+  maxToDate: string = '';
+
+
+
+  MONTHLY = 'MONTHLY';
+  WEEKLY = 'WEEKLY';
 
   constructor(private dashboardService: DashboardService) { }
 
@@ -59,6 +76,13 @@ export class HomeComponent implements OnInit {
   generateYears() {
     const endYear = this.currentYear;
     this.years = Array.from({ length: endYear - this.startYear + 1 }, (_, i) => this.startYear + i);
+  }
+
+  toggleCombined() {
+    this.isCriteriaMonthly = !this.isCriteriaMonthly;
+    this.fetchDriversSummary();
+    this.fetchTripsSummary();
+    this.fetchUsersSummary();
   }
 
   fetchDashInsights() {
@@ -107,9 +131,37 @@ export class HomeComponent implements OnInit {
     this.fetchDriversSummary();
   }
 
+  onTripDateRangeSelected(range: { start: Date; end: Date }) {
+    this.selectedTripRange = {
+      start: this.formatDate(range.start),
+      end: this.formatDate(range.end)
+    };
+    this.fetchTripsSummary();
+  }
+
+  onUserDateRangeSelected(range: { start: Date; end: Date }) {
+    this.selectedUserRange = {
+      start: this.formatDate(range.start),
+      end: this.formatDate(range.end)
+    };
+    this.fetchUsersSummary();
+  }
+
+  onDriverDateRangeSelected(range: { start: Date; end: Date }) {
+    this.selectedDriverRange = {
+      start: this.formatDate(range.start),
+      end: this.formatDate(range.end)
+    };
+    this.fetchDriversSummary();
+  }
+
   fetchTripsSummary() {
     this.loadingTrips = true;
-    this.dashboardService.getTripsSummary(`${this.selectedTripYear}-01-01`, `${this.selectedTripYear}-12-31`).subscribe({
+    this.dashboardService.getTripsSummary(
+      this.isCriteriaMonthly ? `${this.selectedTripYear}-01-01` : this.selectedTripRange.start,
+      this.isCriteriaMonthly ? `${this.selectedTripYear}-12-31` : this.selectedTripRange.end,
+      this.isCriteriaMonthly ? this.MONTHLY : this.WEEKLY
+    ).subscribe({
       next: (res: any) => {
         this.processTripsData(res);
         this.loadingTrips = false;
@@ -123,7 +175,11 @@ export class HomeComponent implements OnInit {
 
   fetchUsersSummary() {
     this.loadingUsers = true;
-    this.dashboardService.getUsersSummary(`${this.selectedUserYear}-01-01`, `${this.selectedUserYear}-12-31`).subscribe({
+    this.dashboardService.getUsersSummary(
+      this.isCriteriaMonthly ? `${this.selectedUserYear}-01-01` : this.selectedUserRange.start,
+      this.isCriteriaMonthly ? `${this.selectedUserYear}-12-31` : this.selectedUserRange.end,
+      this.isCriteriaMonthly ? this.MONTHLY : this.WEEKLY
+    ).subscribe({
       next: (res: any) => {
         this.processUsersData(res);
         this.loadingUsers = false;
@@ -137,7 +193,11 @@ export class HomeComponent implements OnInit {
 
   fetchDriversSummary() {
     this.loadingDrivers = true;
-    this.dashboardService.getDriversSummary(`${this.selectedDriverYear}-01-01`, `${this.selectedDriverYear}-12-31`).subscribe({
+    this.dashboardService.getDriversSummary(
+      this.isCriteriaMonthly ? `${this.selectedDriverYear}-01-01` : this.selectedDriverRange.start,
+      this.isCriteriaMonthly ? `${this.selectedDriverYear}-12-31` : this.selectedDriverRange.end,
+      this.isCriteriaMonthly ? this.MONTHLY : this.WEEKLY
+    ).subscribe({
       next: (res: any) => {
         this.processDriversData(res);
         this.loadingDrivers = false;
@@ -149,16 +209,8 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  processTripsData(trips: { routeId: number; updatedAt: string }[]) {
-    const groupedData: { [key: string]: number } = {};
-
-    trips.forEach(trip => {
-      const date = new Date(trip.updatedAt);
-      const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
-      groupedData[monthYear] = (groupedData[monthYear] || 0) + 1;
-    });
-
-    this.monthlyData = Object.entries(groupedData).map(([period, count]) => ({ period, count }));
+  processTripsData(trips: any[]) {
+    this.tripData = trips;
 
     this.chartOptions = {
       chart: {
@@ -166,23 +218,16 @@ export class HomeComponent implements OnInit {
       },
       series: [{
         name: 'Number of Trips',
-        data: this.monthlyData.map(data => data.count)
+        data: this.tripData.map(data => data.count)
       }],
       xaxis: {
-        categories: this.monthlyData.map(data => data.period)
+        categories: this.tripData.map(data => data.month || data.week)
       }
     };
   }
 
-  processUsersData(users: { dateCreated: string }[]) {
-    const groupedData: { [key: string]: number } = {};
-    users.forEach(user => {
-      const date = new Date(user.dateCreated);
-      const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
-      groupedData[monthYear] = (groupedData[monthYear] || 0) + 1;
-    });
-    this.userData = Object.entries(groupedData).map(([period, count]) => ({ period, count }));
-
+  processUsersData(users: any[]) {
+    this.userData = users;
     this.userChartOptions = {
       chart: {
         type: 'bar'
@@ -192,19 +237,13 @@ export class HomeComponent implements OnInit {
         data: this.userData.map(data => data.count)
       }],
       xaxis: {
-        categories: this.userData.map(data => data.period)
+        categories: this.userData.map(data => data.month || data.week)
       }
     };
   }
 
-  processDriversData(drivers: { dateCreated: string }[]) {
-    const groupedData: { [key: string]: number } = {};
-    drivers.forEach(driver => {
-      const date = new Date(driver.dateCreated);
-      const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
-      groupedData[monthYear] = (groupedData[monthYear] || 0) + 1;
-    });
-    this.driverData = Object.entries(groupedData).map(([period, count]) => ({ period, count }));
+  processDriversData(drivers: any[]) {
+    this.driverData = drivers;
 
     this.driverChartOptions = {
       chart: {
@@ -215,8 +254,12 @@ export class HomeComponent implements OnInit {
         data: this.driverData.map(data => data.count)
       }],
       xaxis: {
-        categories: this.driverData.map(data => data.period)
+        categories: this.driverData.map(data => data.month || data.week)
       }
     };
+  }
+
+  formatDate(date: Date): string {
+    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
   }
 }
