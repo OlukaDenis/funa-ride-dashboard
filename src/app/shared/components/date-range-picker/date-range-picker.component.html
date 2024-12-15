@@ -6,14 +6,23 @@
 
     <!-- Date Picker Dropdown -->
     <div *ngIf="showDatePicker" class="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        <!-- Month and Year Navigation -->
         <div class="flex items-center justify-between p-3">
             <!-- Previous Month -->
             <button (click)="prevMonth()" class="text-gray-600">
                 &larr;
             </button>
 
-            <!-- Current Month -->
-            <span class="font-semibold">{{ currentMonth | date: 'MMMM yyyy' }}</span>
+            <!-- Month and Year Selector -->
+            <div class="flex items-center gap-2">
+                <span class="font-semibold">{{ currentMonth | date: 'MMMM' }}</span>
+                <select class="select select-bordered bg-background" [(ngModel)]="currentYear"
+                    (change)="onYearChange($event)">
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
 
             <!-- Next Month -->
             <button (click)="nextMonth()" class="text-gray-600">
@@ -21,6 +30,7 @@
             </button>
         </div>
 
+        <!-- Calendar Days -->
         <div class="grid grid-cols-7 gap-1 p-3 text-center text-sm">
             <!-- Weekday Labels -->
             <div *ngFor="let day of weekdays" class="font-semibold text-gray-500">

@@ -10,6 +10,7 @@ export class DateRangePickerComponent {
 
   showDatePicker = false;
   currentMonth = new Date();
+  currentYear = this.currentMonth.getFullYear();
   selectedStartDate: Date | null = new Date(new Date().setDate(new Date().getDate() - 30));
   selectedEndDate: Date | null = new Date();
   hoveredDate: Date | null = null;
@@ -17,6 +18,8 @@ export class DateRangePickerComponent {
   weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   maxRangeDays = 30;
+
+  years: number[] = Array.from({ length: 31 }, (_, i) => 2020 + i);
 
   get selectedRange(): string | null {
     if (this.selectedStartDate && this.selectedEndDate) {
@@ -35,17 +38,32 @@ export class DateRangePickerComponent {
     this.showDatePicker = !this.showDatePicker;
   }
 
+  // generateCalendar() {
+  //   const firstDay = new Date(
+  //     this.currentMonth.getFullYear(),
+  //     this.currentMonth.getMonth(),
+  //     1
+  //   );
+  //   const lastDay = new Date(
+  //     this.currentMonth.getFullYear(),
+  //     this.currentMonth.getMonth() + 1,
+  //     0
+  //   );
+
+  //   const dates: Date[] = [];
+  //   for (
+  //     let date = new Date(firstDay);
+  //     date <= lastDay;
+  //     date.setDate(date.getDate() + 1)
+  //   ) {
+  //     dates.push(new Date(date));
+  //   }
+  //   this.days = dates;
+  // }
+
   generateCalendar() {
-    const firstDay = new Date(
-      this.currentMonth.getFullYear(),
-      this.currentMonth.getMonth(),
-      1
-    );
-    const lastDay = new Date(
-      this.currentMonth.getFullYear(),
-      this.currentMonth.getMonth() + 1,
-      0
-    );
+    const firstDay = new Date(this.currentYear, this.currentMonth.getMonth(), 1);
+    const lastDay = new Date(this.currentYear, this.currentMonth.getMonth() + 1, 0);
 
     const dates: Date[] = [];
     for (
@@ -60,21 +78,67 @@ export class DateRangePickerComponent {
 
   prevMonth() {
     this.currentMonth = new Date(
-      this.currentMonth.getFullYear(),
+      this.currentYear,
       this.currentMonth.getMonth() - 1,
       1
     );
+    this.updateYearAndMonth();
     this.generateCalendar();
   }
 
+  // prevMonth() {
+  //   this.currentMonth = new Date(
+  //     this.currentMonth.getFullYear(),
+  //     this.currentMonth.getMonth() - 1,
+  //     1
+  //   );
+  //   this.generateCalendar();
+  // }
+
   nextMonth() {
     this.currentMonth = new Date(
-      this.currentMonth.getFullYear(),
+      this.currentYear,
       this.currentMonth.getMonth() + 1,
       1
     );
+    this.updateYearAndMonth();
     this.generateCalendar();
   }
+
+  // nextMonth() {
+  //   this.currentMonth = new Date(
+  //     this.currentMonth.getFullYear(),
+  //     this.currentMonth.getMonth() + 1,
+  //     1
+  //   );
+  //   this.generateCalendar();
+  // }
+
+  onYearChange(event: Event) {
+    const year = (event.target as HTMLSelectElement).value;
+    this.currentYear = parseInt(year, 10);
+    this.currentMonth = new Date(this.currentYear, this.currentMonth.getMonth(), 1);
+    this.generateCalendar();
+  }
+
+  updateYearAndMonth() {
+    this.currentYear = this.currentMonth.getFullYear();
+  }
+
+  // selectDate(date: Date) {
+  //   if (!this.selectedStartDate || (this.selectedEndDate && this.selectedStartDate)) {
+  //     this.selectedStartDate = date;
+  //     this.selectedEndDate = null;
+  //   } else if (!this.selectedEndDate && this.isSelectable(date)) {
+  //     this.selectedEndDate = date;
+  //     if (this.selectedStartDate > this.selectedEndDate) {
+  //       [this.selectedStartDate, this.selectedEndDate] = [
+  //         this.selectedEndDate,
+  //         this.selectedStartDate,
+  //       ];
+  //     }
+  //   }
+  // }
 
   selectDate(date: Date) {
     if (!this.selectedStartDate || (this.selectedEndDate && this.selectedStartDate)) {
