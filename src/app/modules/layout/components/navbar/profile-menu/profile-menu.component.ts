@@ -5,6 +5,8 @@ import { ClickOutsideDirective } from '../../../../../shared/directives/click-ou
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { StorageService } from '@app/core/services/storage.service';
+import { LoginResponse } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -35,19 +37,20 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
     ]),
   ],
 })
+
 export class ProfileMenuComponent implements OnInit {
   public isOpen = false;
   public profileMenu = [
-    {
-      title: 'Your Profile',
-      icon: './assets/icons/heroicons/outline/user-circle.svg',
-      link: '/profile',
-    },
-    {
-      title: 'Settings',
-      icon: './assets/icons/heroicons/outline/cog-6-tooth.svg',
-      link: '/settings',
-    },
+    // {
+    //   title: 'Your Profile',
+    //   icon: './assets/icons/heroicons/outline/user-circle.svg',
+    //   link: '/profile',
+    // },
+    // {
+    //   title: 'Settings',
+    //   icon: './assets/icons/heroicons/outline/cog-6-tooth.svg',
+    //   link: '/settings',
+    // },
     {
       title: 'Log out',
       icon: './assets/icons/heroicons/outline/logout.svg',
@@ -76,9 +79,13 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeMode = ['light', 'dark'];
 
-  constructor(public themeService: ThemeService) { }
+  currentUser!: LoginResponse;
 
-  ngOnInit(): void { }
+  constructor(public themeService: ThemeService, public storage: StorageService) { }
+
+  ngOnInit(): void {
+    this.currentUser = this.storage.getSavedUser;
+  }
 
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;
